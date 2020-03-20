@@ -1,7 +1,7 @@
 <template>
             <v-card class="elevation-12">
               <v-toolbar
-                color="primary"
+                color="#242424"
                 dark
                 flat
               >
@@ -28,8 +28,11 @@
                     v-model="form.password"
                   />
                   <v-spacer/>
-                  <v-btn type="submit" color="dark">Login</v-btn>                  
-                  <v-btn color="dark" to="/">Cancel</v-btn>
+                  <div align="center">
+                  <v-btn type="submit" color="dark" class="info">Login</v-btn>               
+                  <v-btn color="dark" to="/" class="mx-4 warning">Cancel</v-btn>
+
+                  </div>
                 </v-form>
               </v-card-text>
               <v-card-actions>
