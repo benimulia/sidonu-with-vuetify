@@ -53,7 +53,7 @@ export default{
       }
     },
     signOut({ commit }){
-      return axios.post('logout').then(() => {
+      return axios.get('logout').then(() => {
         commit('SET_TOKEN', null)
         commit('SET_USER', null)
       }

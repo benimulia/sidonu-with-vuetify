@@ -4,6 +4,9 @@
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
+      color="deep-black accent-4"
+      dark
+      bottom
     >
       <v-list dense>
         <template v-for="item in items">
@@ -78,7 +81,7 @@
     <v-app-bar
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       app
-      color="dark"
+      color="deep-black accent-6"
       dark
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -94,6 +97,22 @@
       <v-btn icon>
         <v-icon>mdi-account</v-icon>
       </v-btn>
+      <v-dialog v-model="dialog" persistent max-width="290">
+        <template v-slot:activator="{ on }">
+      <v-btn icon v-on="on">
+        <v-icon>mdi-power</v-icon>
+      </v-btn>
+      </template>
+        <v-card>
+          <v-card-title class="headline">Konfirmasi</v-card-title>
+          <v-card-text>Apakah Anda yakin untuk keluar?</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="warning"  @click="dialog = false">Batal</v-btn>
+            <v-btn color="success"  @click.prevent="signOut">Ya</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-app-bar>
     <v-content>
       <v-container
@@ -106,10 +125,26 @@
 
       </v-container>
     </v-content>
+    <v-footer
+        class="font-weight-medium "
+        dark
+        dense
+        
+      >
+        <v-col
+          class="text-right"
+          cols="12"
+        >
+          sidonu &nbsp;&nbsp; &copy; {{ new Date().getFullYear() }} by Maju Jaya Makmur Sentosa
+        </v-col>
+      </v-footer>
+
   </v-app>
 </template>
 
 <script>
+import {mapActions} from 'vuex'
+
   export default {
     props: {
       source: String,
@@ -118,30 +153,43 @@
       dialog: false,
       drawer: null,
       items: [
-        { icon: 'mdi-view-dashboard', text: 'Dashboard' , link:'/dashboard'},
+        { icon: 'mdi-view-dashboard', text: 'Dashboard' , link:'/admin/dashboard'},
+        { icon: 'mdi-calendar', text: 'Kegiatan',link:'/admin/kegiatan' },
         {
           icon: 'mdi-account-multiple',
           'icon-alt': 'mdi-chevron-down',
           text: 'Peserta',
           model: true,
           children: [
-            { icon: 'mdi-clipboard-file', text: 'List Peserta', link:'/' },
-            { icon: 'mdi-mail', text: 'Jenis Peserta' },
+            { icon: 'mdi-clipboard-file', text: 'List Peserta', link:'/peserta' },
+            { icon: 'mdi-mail', text: 'Jenis Peserta',link:'/admin/jenispeserta' },
           ],
         },
-        { icon: 'mdi-calendar', text: 'Kegiatan' },
         {
           icon: 'mdi-handshake',
           'icon-alt': 'mdi-chevron-down',
           text: 'Donasi',
           model: true,
           children: [
-            { icon: 'mdi-clipboard-file', text: 'List Donasi', link:'/' },
-            { icon: 'mdi-mail', text: 'Jenis Donasi' },
+            { icon: 'mdi-clipboard-file', text: 'List Donasi', link:'/donasi' },
+            { icon: 'mdi-mail', text: 'Jenis Donasi',link:'/admin/jenisdonasi' },
           ],
         },
         { icon: 'mdi-settings', text: 'Settings' },
       ],
     }),
+    methods:{
+      ...mapActions({
+        signOutAction: 'auth/signOut'
+      }),
+
+      signOut(){
+        this.signOutAction().then(()=>{
+          this.$router.replace({
+            name: 'Home'
+          })
+        })
+      }
+    }
   }
 </script>
