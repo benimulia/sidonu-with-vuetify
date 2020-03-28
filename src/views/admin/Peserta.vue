@@ -80,11 +80,13 @@
       <template v-slot:item.actions="{ item }">
         <v-icon
           @click="editItem(item)"
+          color="success"
         >
           mdi-pencil
         </v-icon>
         <v-icon
           @click="deleteItem(item)"
+          color="error"
         >
           mdi-delete
         </v-icon>
@@ -168,7 +170,7 @@ import axios from 'axios'
 
     methods: {
       fetchPesertas(){
-          axios.get('/peserta')
+          axios.get('/peserta', {timeout: 20000})
           .then(response=>{
             console.log(response.data);
             this.pesertas= response.data;
@@ -209,7 +211,7 @@ import axios from 'axios'
           console.log('edited data');
 
           axios.put('/peserta/'+this.editedItem.id,{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,})
+          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 2000})
           .then(response=>{
             console.log(response);
           })
@@ -219,7 +221,7 @@ import axios from 'axios'
           console.log('created data');
 
           axios.post('/postpeserta',{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,})
+          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 2000})
           .then(response=>{
             console.log(response);
           })

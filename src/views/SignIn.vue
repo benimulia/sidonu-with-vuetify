@@ -9,7 +9,7 @@
                 
               </v-toolbar>
               <v-card-text>
-                <v-form @submit.prevent="submit">
+                <v-form @submit.prevent="submit" ref="form" v-model="valid" lazy-validation>
                   <v-text-field
                     id="email"
                     label="Email"
@@ -17,19 +17,25 @@
                     prepend-icon="person"
                     type="email"
                     v-model="form.email"
+                    :rules="emailRules"
+                    required
                   />
 
                   <v-text-field
                     id="password"
-                    label="Password"
-                    name="password"
                     prepend-icon="lock"
-                    type="password"
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                    :rules="[rules.required]"
+                    :type="show1 ? 'text' : 'password'"
+                    name="password"
+                    label="Password"
+                    counter
+                    @click:append="show1 = !show1"
                     v-model="form.password"
                   />
                   <v-spacer/>
                   <div align="center">
-                  <v-btn type="submit" color="dark" class="info">Login</v-btn>               
+                  <v-btn type="submit" color="dark" class="info" :disabled="!valid">Login</v-btn>               
                   <v-btn color="dark" to="/" class="mx-4 warning">Cancel</v-btn>
 
                   </div>
@@ -60,7 +66,16 @@ export default {
         form:{
             email : '',
             password : ''
-        }
+        },
+        show1: false,
+        rules: {
+          required: value => !!value || 'Required.',
+        },
+        valid: true,
+        emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+        ],
     }  
   },
 
@@ -95,11 +110,13 @@ export default {
         login: "auth/login"
       }),
       submit() {
+        if(this.$refs.form.validate()){
          this.login(this.form).then(() => {
            this.$router.replace({
              name: 'dashboard'
            })
          })
+         }
       }
   }
 }
