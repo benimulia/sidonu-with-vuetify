@@ -34,79 +34,37 @@ const routes = [
     path: '/admin/dashboard',
     name: 'dashboard',
     component: Dashboard,
-    beforeEnter: (to,from,next) => {
-      if(!store.getters['auth/authenticated']){
-        return next({
-          name: 'Home'
-        })
-      }
-      next()
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/peserta',
     name: 'Peserta',
     component: Peserta,
-    beforeEnter: (to,from,next) => {
-      if(!store.getters['auth/authenticated']){
-        return next({
-          name: 'Home'
-        })
-      }
-      next()
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/jenispeserta',
     name: 'JenisPeserta',
     component: JenisPeserta,
-    beforeEnter: (to,from,next) => {
-      if(!store.getters['auth/authenticated']){
-        return next({
-          name: 'Home'
-        })
-      }
-      next()
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/donasi',
     name: 'Donasi',
     component: Donasi,
-    beforeEnter: (to,from,next) => {
-      if(!store.getters['auth/authenticated']){
-        return next({
-          name: 'Home'
-        })
-      }
-      next()
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/jenisdonasi',
     name: 'JenisDonasi',
     component: JenisDonasi,
-    beforeEnter: (to,from,next) => {
-      if(!store.getters['auth/authenticated']){
-        return next({
-          name: 'Home'
-        })
-      }
-      next()
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/kegiatan',
     name: 'Kegiatan',
     component: Kegiatan,
-    beforeEnter: (to,from,next) => {
-      if(!store.getters['auth/authenticated']){
-        return next({
-          name: 'Home'
-        })
-      }
-      next()
-    }
+    meta: { requiresAuth: true }
   },
 
 ]
@@ -117,4 +75,17 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters['auth/authenticated']) {
+      next({
+        path: '/'
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
 export default router

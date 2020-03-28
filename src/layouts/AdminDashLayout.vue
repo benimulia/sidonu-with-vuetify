@@ -161,7 +161,7 @@ import {mapActions} from 'vuex'
           text: 'Peserta',
           model: true,
           children: [
-            { icon: 'mdi-clipboard-file', text: 'List Peserta', link:'/peserta' },
+            { icon: 'mdi-clipboard-file', text: 'List Peserta', link:'/admin/peserta' },
             { icon: 'mdi-mail', text: 'Jenis Peserta',link:'/admin/jenispeserta' },
           ],
         },
