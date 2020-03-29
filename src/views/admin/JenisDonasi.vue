@@ -2,13 +2,13 @@
   <div class="col-12">
     <v-card>
     <v-card-title  >
-      Jenis Peserta
+      Jenis Donasi
     </v-card-title>
 
     <v-data-table
     :headers="headers"
-    :items="pesertas"
-    sort-by="id_peserta"
+    :items="donasis"
+    sort-by="id_donasi"
     class="elevation-1"
     :search="search"
     
@@ -41,7 +41,7 @@
                         :rules="nameRules"
                         required
                         v-model="editedItem.id_jenis_donasi" 
-                        label="ID Jenis Peserta">
+                        label="ID Jenis Donasi">
                       </v-text-field>
                     </v-col>
                     <v-col cols="8">
@@ -49,7 +49,7 @@
                         required 
                         :rules="nameRules" 
                         v-model="editedItem.nama_jenis_donasi" 
-                        label="Nama Jenis Peserta">
+                        label="Nama Jenis Donasi">
                       </v-text-field>
                     </v-col>
                   </v-row>
@@ -94,7 +94,7 @@ import AdminDashLayout from '../../layouts/AdminDashLayout'
 import axios from 'axios'
 
   export default {
-   name: 'Peserta',
+   name: 'JenisDonasi',
    components: {
   },
    data: () => ({
@@ -111,12 +111,12 @@ import axios from 'axios'
           value: 'id',
         },
         {
-          text: 'ID Jenis Peserta', value: 'id_jenis_donasi'
+          text: 'ID Jenis Donasi', value: 'id_jenis_donasi'
         },
-        { text: 'Jenis Peserta', value: 'nama_jenis_donasi' },
+        { text: 'Jenis Donasi', value: 'nama_jenis_donasi' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      pesertas: [],
+      donasis: [],
       editedIndex: -1,
       editedItem: {
         id_jenis_donasi: '',
@@ -141,27 +141,27 @@ import axios from 'axios'
     },
 
     methods: {
-      fetchPesertas(){
+      fetchDonasis(){
           axios.get('/jenis_donasi')
           .then(response=>{
             console.log(response.data);
-            this.pesertas= response.data;
+            this.donasis= response.data;
           })
       },
 
       initialize(){
-        this.fetchPesertas();
+        this.fetchDonasis();
       },
 
       editItem (item) {
-        this.editedIndex = this.pesertas.indexOf(item)
+        this.editedIndex = this.donasis.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.pesertas.indexOf(item)
-        if(confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)){
+        const index = this.donasis.indexOf(item)
+        if(confirm('Apakah yakin dihapus?') && this.donasis.splice(index, 1)){
         
         console.log('deleted data');
 
@@ -191,7 +191,7 @@ import axios from 'axios'
             console.log(response);
           })
 
-          Object.assign(this.pesertas[this.editedIndex], this.editedItem)
+          Object.assign(this.donasis[this.editedIndex], this.editedItem)
           this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
@@ -201,7 +201,7 @@ import axios from 'axios'
             console.log(response);
           })
 
-          this.pesertas.push(this.editedItem);          
+          this.donasis.push(this.editedItem);          
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }
 

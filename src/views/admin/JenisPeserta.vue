@@ -94,7 +94,7 @@ import AdminDashLayout from '../../layouts/AdminDashLayout'
 import axios from 'axios'
 
   export default {
-   name: 'Peserta',
+   name: 'JenisPeserta',
    components: {
   },
    data: () => ({

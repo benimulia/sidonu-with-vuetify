@@ -36,7 +36,8 @@
                   <v-spacer/>
                   <div align="center">
                   <v-btn type="submit" color="dark" class="info" :disabled="!valid">Login</v-btn>               
-                  <v-btn color="dark" to="/" class="mx-4 warning">Cancel</v-btn>
+                  <v-btn color="dark" to="/" class="mx-4 warning">Cancel</v-btn><br> <br> <br>
+                  <a href="/signup">Tidak punya akun? Klik Disini!</a>
 
                   </div>
                 </v-form>

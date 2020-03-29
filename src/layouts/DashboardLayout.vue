@@ -5,15 +5,13 @@
         color="#242424"
         dark
       >
-        <v-btn icon to="/">
-          <v-icon>mdi-home</v-icon>
-        </v-btn>
-        <v-toolbar-title to="/">sidonu</v-toolbar-title>
+        <v-icon class="mx-4">mdi-home</v-icon>
+        <v-toolbar-title>sidonu</v-toolbar-title>
   
         <v-spacer></v-spacer>
   
         <v-toolbar-items>
-          <!-- <v-btn text to="/signup"> Sign Up</v-btn>  -->
+          <v-btn text to="/signup"> Sign Up</v-btn>
           <v-btn text to="/signin"> Sign In</v-btn>
         </v-toolbar-items>
   
