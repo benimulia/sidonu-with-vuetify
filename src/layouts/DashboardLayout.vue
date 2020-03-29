@@ -1,6 +1,6 @@
 <template>
+    <div >
     <div>
-        <div>
       <v-app-bar
         color="#242424"
         dark
@@ -20,7 +20,7 @@
       </v-app-bar>
     </div>
 
-    <v-content>
+    <v-content >
       <slot/>
     </v-content>
 

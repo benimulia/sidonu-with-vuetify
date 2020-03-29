@@ -67,7 +67,7 @@
                 
               </v-card-actions>
               <Loader></Loader>  
-              <Snackbar></Snackbar>
+              <Notifikasi></Notifikasi>
             </v-card>
 </template>
 
@@ -75,13 +75,13 @@
 import LoginOrSignupLayout from '../layouts/LoginOrSignupLayout'
 import axios from 'axios'
 import Loader from '../components/_loader'
-import Snackbar from '../components/snackbar'
+import Notifikasi from '../components/Notifikasi'
 
 export default {
   name: 'SignUp',
   components: {
     Loader,
-    Snackbar
+    Notifikasi
   },
 
   data() {
@@ -125,7 +125,7 @@ export default {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
         this.$store.commit('LOADER',false);
-        this.$store.commit('SNACKBAR',true);
+        this.$store.commit('SET_BERHASILSIMPAN',true);
         return response;
       }, (error) => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger

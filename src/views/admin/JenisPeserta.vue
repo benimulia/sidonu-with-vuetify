@@ -1,7 +1,7 @@
 <template>
   <div class="col-12">
     <v-card>
-    <v-card-title>
+    <v-card-title  >
       Jenis Peserta
     </v-card-title>
 
@@ -11,9 +11,10 @@
     sort-by="id_peserta"
     class="elevation-1"
     :search="search"
+    
     >
       <template v-slot:top>
-        <v-toolbar flat color="white">
+        <v-toolbar flat >
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -26,19 +27,30 @@
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
             </template>
+            <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
 
-              <v-card-text>
+              <v-card-text>                
                 <v-container>
                   <v-row>
                     <v-col cols="4">
-                      <v-text-field required :rules="[v => !!v || 'ID Jenis Peserta is required']" v-model="editedItem.id_jenis_peserta" label="ID Jenis Peserta"></v-text-field>
+                      <v-text-field 
+                        :rules="nameRules"
+                        required
+                        v-model="editedItem.id_jenis_peserta" 
+                        label="ID Jenis Peserta">
+                      </v-text-field>
                     </v-col>
                     <v-col cols="8">
-                      <v-text-field required :rules="[v => !!v || 'Nama Jenis Peserta is required']" v-model="editedItem.nama_jenis_peserta" label="Nama Jenis Peserta"></v-text-field>
+                      <v-text-field 
+                        required 
+                        :rules="nameRules" 
+                        v-model="editedItem.nama_jenis_peserta" 
+                        label="Nama Jenis Peserta">
+                      </v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -47,9 +59,10 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn rounded color="dark" class="mx-4 warning" text @click="close">Cancel</v-btn>
-                <v-btn rounded color="dark" class="success" text @click="save">Save</v-btn>
+                <v-btn rounded color="dark" class="success" text @click="save" :disabled="!valid">Save</v-btn>
               </v-card-actions>
-            </v-card>
+            </v-card>            
+            </v-form>
           </v-dialog>
         </v-toolbar>
       </template>
@@ -73,29 +86,32 @@
       </template>
     </v-data-table>
     </v-card>
-    <Loader></Loader>
   </div>  
 </template>
 
 <script>
 import AdminDashLayout from '../../layouts/AdminDashLayout'
-import Loader from '../../components/_loader'
 import axios from 'axios'
 
   export default {
    name: 'Peserta',
    components: {
-    Loader
   },
    data: () => ({
       dialog: false,
+      valid: true,
+      nameRules: [
+      v => !!v || 'Harus diisi',
+      ],
       search: '',
       headers: [
         {
-          text: 'ID Jenis Peserta',
+          text: 'ID',
           align: 'start',
-          sortable: false,
-          value: 'id_jenis_peserta',
+          value: 'id',
+        },
+        {
+          text: 'ID Jenis Peserta', value: 'id_jenis_peserta'
         },
         { text: 'Jenis Peserta', value: 'nama_jenis_peserta' },
         { text: 'Actions', value: 'actions', sortable: false },
@@ -104,11 +120,11 @@ import axios from 'axios'
       editedIndex: -1,
       editedItem: {
         id_jenis_peserta: '',
-        jenis_peserta: '',
+        nama_jenis_peserta: '',
       },
       defaultItem: {
         id_jenis_peserta: '',
-        jenis_peserta: '',
+        nama_jenis_peserta: '',
       },
     }),
 
@@ -145,13 +161,16 @@ import axios from 'axios'
 
       deleteItem (item) {
         const index = this.pesertas.indexOf(item)
-        confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)
+        if(confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)){
+        
         console.log('deleted data');
 
         axios.delete('/jenis_peserta/'+ item.id)
           .then(response=>{
             console.log(response);
+            this.$store.commit('SET_BERHASILHAPUS',true);
           })
+        }
       },
 
       close () {
@@ -163,53 +182,38 @@ import axios from 'axios'
       },
 
       save () {
+        if(this.editedItem.id_jenis_peserta !='' || this.editedItem.nama_jenis_peserta !=''){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.put('/jenis_peserta/'+this.editedItem.id,{id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_jenis_peserta:this.editedItem.nama_jenis_peserta}, {timeout : 60000})
+          axios.post('/jenis_peserta/'+this.editedItem.id,{id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_jenis_peserta:this.editedItem.nama_jenis_peserta}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
           Object.assign(this.pesertas[this.editedIndex], this.editedItem)
+          this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
 
-          axios.post('/postjenis_peserta',{id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_jenis_peserta:this.editedItem.nama_jenis_peserta}, {timeout : 60000})
+          axios.post('/postjenis_peserta',{id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_jenis_peserta:this.editedItem.nama_jenis_peserta}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          this.pesertas.push(this.editedItem)
+          this.pesertas.push(this.editedItem);          
+          this.$store.commit('SET_BERHASILSIMPAN',true);
         }
 
         this.close()
+        }else{
+          this.$store.commit('SET_HARUSISI',true);
+        }
       },
     },
    created(){
       this.$emit(`update:layout`, AdminDashLayout);
       this.initialize();
-      axios.interceptors.request.use((config) => {
-        // Do something before request is sent
-        this.$store.commit('LOADER',true);
-        return config;
-      }, (error) => {
-        // Do something with request error
-        this.$store.commit('LOADER',false);
-        return Promise.reject(error);
-      });
-
-      // Add a response interceptor
-      axios.interceptors.response.use((response)=> {
-          // Any status code that lie within the range of 2xx cause this function to trigger
-          // Do something with response data
-          this.$store.commit('LOADER',false);
-          return response;
-        }, (error) => {
-          // Any status codes that falls outside the range of 2xx cause this function to trigger
-          // Do something with response error
-          return Promise.reject(error);
-        });
     },
   }
 </script>

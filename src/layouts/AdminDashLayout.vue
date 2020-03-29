@@ -4,9 +4,9 @@
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
-      color="deep-black accent-4"
+      color="deep-black accent-6"
+      left
       dark
-      bottom
     >
       <v-list dense>
         <template v-for="item in items">
@@ -81,7 +81,7 @@
     <v-app-bar
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       app
-      color="deep-black accent-6"
+      style="background-image: linear-gradient(to right, #434343 0%, black 100%);"
       dark
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -90,10 +90,13 @@
         class="ml-0 pl-4"
       >
         <span class="hidden-sm-and-down">S I D O N U</span>
+        <!--<span v-if="user.name=='Admin'" class="hidden-sm-and-down">S I D O N U</span>-->
       </v-toolbar-title>
 
       <v-spacer />
-      Welcome, Admin
+      <div v-if="authenticated">
+      Welcome, {{user.name}}
+      </div>
       <v-btn icon>
         <v-icon>mdi-account</v-icon>
       </v-btn>
@@ -109,15 +112,16 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="warning"  @click="dialog = false">Batal</v-btn>
-            <v-btn color="success"  @click.prevent="signOut">Ya</v-btn>
+            <v-btn color="success"  @click.prevent="signOut" @click="notif=true">Ya</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-app-bar>
-    <v-content>
+    <v-content >
       <v-container
         class="fill-height"
-        fluid
+        fluid        
+        :style="{'background-image': `url(${require('../assets/background.jpg')})`}"
       >
 
         <slot/>
@@ -129,6 +133,7 @@
         class="font-weight-medium "
         dark
         dense
+        style="background-image: linear-gradient(to right, #434343 0%, black 100%);"
         
       >
         <v-col
@@ -138,20 +143,39 @@
           sidonu &nbsp;&nbsp; &copy; {{ new Date().getFullYear() }} by Maju Jaya Makmur Sentosa
         </v-col>
       </v-footer>
-
+    <Loader></Loader>
+    <Notifikasi></Notifikasi>
+    <v-snackbar v-model="notif" :timeout="4000" top color="success">
+        <span>Berhasil Keluar!</span>
+        <v-btn text color="white" @click="notif = false">Close</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
+import Loader from '../components/_loader'
+import Notifikasi from '../components/Notifikasi'
+import axios from 'axios'
 
   export default {
+    computed: {
+        ...mapGetters({
+            user: 'auth/user',
+            authenticated: 'auth/authenticated'
+        })
+    },
     props: {
       source: String,
+    },
+    components: {
+      Loader,
+      Notifikasi
     },
     data: () => ({
       dialog: false,
       drawer: null,
+      notif: false,
       items: [
         { icon: 'mdi-view-dashboard', text: 'Dashboard' , link:'/admin/dashboard'},
         { icon: 'mdi-calendar', text: 'Kegiatan',link:'/admin/kegiatan' },
@@ -190,6 +214,30 @@ import {mapActions} from 'vuex'
           })
         })
       }
+    },
+    created(){
+      axios.interceptors.request.use((config) => {
+        // Do something before request is sent
+        this.$store.commit('LOADER',true);
+        return config;
+      }, (error) => {
+        // Do something with request error
+        this.$store.commit('LOADER',false);        
+        return Promise.reject(error);
+      });
+
+    // Add a response interceptor
+    axios.interceptors.response.use((response)=> {
+        // Any status code that lie within the range of 2xx cause this function to trigger
+        // Do something with response data
+        this.$store.commit('LOADER',false);
+        return response;
+      }, (error) => {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        this.$store.commit('LOADER',false);
+        return Promise.reject(error);
+      });
     }
   }
 </script>

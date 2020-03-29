@@ -45,7 +45,15 @@
                 <v-spacer />
                 
               </v-card-actions>
-              <Loader></Loader>  
+              <Loader></Loader> 
+              <v-snackbar v-model="notif" :timeout="4000" top color="error">
+                  <span>Oops! Email atau Password Salah</span>
+                  <v-btn text color="white" @click="notif = false">Close</v-btn>
+              </v-snackbar>
+              <v-snackbar v-model="berhasil" :timeout="5000" top color="success">
+                  <span>Berhasil Login</span>
+                  <v-btn text color="white" @click="berhasil = false">Close</v-btn>
+              </v-snackbar>
             </v-card>
 </template>
 
@@ -58,7 +66,7 @@ import Loader from '../components/_loader'
 export default {
   name: 'SignIn',
   components: {
-    Loader
+    Loader,
   },
 
   data() {
@@ -66,7 +74,9 @@ export default {
         form:{
             email : '',
             password : ''
-        },
+        },        
+        notif: false,
+        berhasil:false,
         show1: false,
         rules: {
           required: value => !!value || 'Required.',
@@ -89,6 +99,7 @@ export default {
       }, (error) => {
         // Do something with request error
         this.$store.commit('LOADER',false);
+        this.notif=true;
         return Promise.reject(error);
       });
 
@@ -97,10 +108,13 @@ export default {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
         this.$store.commit('LOADER',false);
+        this.berhasil=true;
         return response;
       }, (error) => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
+        this.$store.commit('LOADER',false);
+        this.notif=true;
         return Promise.reject(error);
       });
   },

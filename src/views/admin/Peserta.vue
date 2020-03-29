@@ -26,6 +26,7 @@
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
             </template>
+            <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
@@ -71,9 +72,10 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn rounded color="dark" class="mx-4 warning" text @click="close">Cancel</v-btn>
-                <v-btn rounded color="dark" class="success" text @click="save">Save</v-btn>
+                <v-btn rounded color="dark" class="success" text @click="save" :disabled="!valid">Save</v-btn>
               </v-card-actions>
             </v-card>
+            </v-form>
           </v-dialog>
         </v-toolbar>
       </template>
@@ -96,22 +98,21 @@
       </template>
     </v-data-table>
     </v-card>
-    <Loader></Loader>
   </div>  
 </template>
 
 <script>
 import AdminDashLayout from '../../layouts/AdminDashLayout'
-import Loader from '../../components/_loader'
 import axios from 'axios'
 
   export default {
    name: 'Peserta',
    components: {
-    Loader
+     //
   },
    data: () => ({
       dialog: false,
+      valid: true,
       search: '',
       jk:[
         'Laki-laki',
@@ -189,13 +190,16 @@ import axios from 'axios'
 
       deleteItem (item) {
         const index = this.pesertas.indexOf(item)
-        confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)
+        if(confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)){
+        
         console.log('deleted data');
 
         axios.delete('/peserta/'+ item.id)
           .then(response=>{
             console.log(response);
+            this.$store.commit('SET_BERHASILHAPUS',true);
           })
+        }
       },
 
       close () {
@@ -207,28 +211,34 @@ import axios from 'axios'
       },
 
       save () {
+        if(this.editedItem.id_jenis_peserta !='' || this.editedItem.jenis_kelamin !='' || this.editedItem.nama_peserta !='' || this.editedItem.alamat_peserta !='' || this.editedItem.no_hp !='' || this.editedItem.id_peserta !=''){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.put('/peserta/'+this.editedItem.id,{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 2000})
+          axios.post('/peserta/'+this.editedItem.id,{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
+          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          Object.assign(this.pesertas[this.editedIndex], this.editedItem)
+          Object.assign(this.pesertas[this.editedIndex], this.editedItem);
+          this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
 
           axios.post('/postpeserta',{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 2000})
+          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          this.pesertas.push(this.editedItem)
+          this.pesertas.push(this.editedItem);
+          this.$store.commit('SET_BERHASILSIMPAN',true);
         }
         this.close()
+        }else{
+          this.$store.commit('SET_HARUSISI',true);
+        }
       },
     },
    created(){
