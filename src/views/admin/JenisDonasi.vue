@@ -7,8 +7,8 @@
 
     <v-data-table
     :headers="headers"
-    :items="donasis"
-    sort-by="id_donasi"
+    :items="jenisdonasis"
+    sort-by="id"
     class="elevation-1"
     :search="search"
     
@@ -25,7 +25,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon>New Item</v-btn>
+              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon> New Item</v-btn>
             </template>
             <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
@@ -36,16 +36,9 @@
               <v-card-text>                
                 <v-container>
                   <v-row>
-                    <!-- <v-col cols="4">
-                      <v-text-field 
-                        :rules="nameRules"
-                        required
-                        v-model="editedItem.id_jenis_donasi" 
-                        label="ID Jenis Donasi">
-                      </v-text-field>
-                    </v-col> -->
                     <v-col cols="8">
                       <v-text-field 
+                        prepend-icon="title"
                         required 
                         :rules="nameRules" 
                         v-model="editedItem.nama_jenis_donasi" 
@@ -108,15 +101,15 @@ import axios from 'axios'
         {
           text: 'ID',
           align: 'start',
-          value: 'id',
+          value: 'id_jenis_donasi',
         },
         { text: 'Jenis Donasi', value: 'nama_jenis_donasi' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      donasis: [],
+      jenisdonasis: [],
       editedIndex: -1,
       editedItem: {
-        id_jenis_donasi: '',
+        id_jenis_donasi:'',
         nama_jenis_donasi: '',
       },
       defaultItem: {
@@ -138,31 +131,31 @@ import axios from 'axios'
     },
 
     methods: {
-      fetchDonasis(){
+      fetchJenisDonasis(){
           axios.get('/jenis_donasi')
           .then(response=>{
             console.log(response.data);
-            this.donasis= response.data;
+            this.jenisdonasis= response.data;
           })
       },
 
       initialize(){
-        this.fetchDonasis();
+        this.fetchJenisDonasis();
       },
 
       editItem (item) {
-        this.editedIndex = this.donasis.indexOf(item)
+        this.editedIndex = this.jenisdonasis.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.donasis.indexOf(item)
-        if(confirm('Apakah yakin dihapus?') && this.donasis.splice(index, 1)){
+        const index = this.jenisdonasis.indexOf(item)
+        if(confirm('Apakah yakin dihapus?') && this.jenisdonasis.splice(index, 1)){
         
         console.log('deleted data');
 
-        axios.delete('/jenis_donasi/'+ item.id)
+        axios.delete('/jenis_donasi/'+ item.id_jenis_donasi)
           .then(response=>{
             console.log(response);
             this.$store.commit('SET_BERHASILHAPUS',true);
@@ -179,30 +172,31 @@ import axios from 'axios'
       },
 
       save () {
-        if(this.editedItem.id_jenis_donasi !='' || this.editedItem.nama_jenis_donasi !=''){
+        if(this.editedItem.nama_jenis_donasi !=''){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.post('/jenis_donasi/'+this.editedItem.id,{id_jenis_donasi:this.editedItem.id_jenis_donasi, nama_jenis_donasi:this.editedItem.nama_jenis_donasi}, {timeout : 30000})
+          axios.post('/jenis_donasi/'+this.editedItem.id_jenis_donasi,{nama_jenis_donasi:this.editedItem.nama_jenis_donasi}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          Object.assign(this.donasis[this.editedIndex], this.editedItem)
+          Object.assign(this.jenisdonasis[this.editedIndex], this.editedItem)
           this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
 
-          axios.post('/postjenis_donasi',{id_jenis_donasi:this.editedItem.id_jenis_donasi, nama_jenis_donasi:this.editedItem.nama_jenis_donasi}, {timeout : 30000})
+          axios.post('/postjenis_donasi',{nama_jenis_donasi:this.editedItem.nama_jenis_donasi}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          this.donasis.push(this.editedItem);          
+          this.jenisdonasis.push(this.editedItem);          
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }
 
-        this.close()
+        this.close();
+        this.initialize();
         }else{
           this.$store.commit('SET_HARUSISI',true);
         }

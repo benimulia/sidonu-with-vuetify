@@ -94,9 +94,7 @@
       </v-toolbar-title>
 
       <v-spacer />
-      <div v-if="authenticated">
-      Welcome, {{user.name}}
-      </div>
+      <span class="hidden-sm-and-down" v-if="authenticated">Welcome, {{user.name}}</span>
       <v-btn icon>
         <v-icon>mdi-account</v-icon>
       </v-btn>

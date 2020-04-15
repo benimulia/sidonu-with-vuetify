@@ -37,7 +37,14 @@
                 <v-container>
                   <v-row>
                     <v-col cols="8">
-                      <v-text-field required :rules="[v => !!v || 'Nama Peserta is required']" v-model="editedItem.nama_donatur" label="Nama Peserta"></v-text-field>
+                      <v-text-field 
+                        required 
+                        :rules="[v => !!v || 'Nama Peserta is required']" 
+                        v-model="editedItem.nama_donatur" 
+                        label="Nama Peserta"
+                        prepend-icon="person"                        
+                      >
+                      </v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
                       <v-select
@@ -48,6 +55,7 @@
                         :rules="[v => !!v || 'Jenis Peserta is required']"
                         label="Jenis Peserta"
                         required
+                        prepend-icon="recent_actors"
                       ></v-select>
                     </v-col>                    
                     <v-col cols="4">
@@ -57,16 +65,39 @@
                         :rules="[v => !!v || 'Jenis Kelamin is required']"
                         label="Jenis Kelamin"
                         required
+                        prepend-icon="wc"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field required :rules="[v => !!v || 'No HP is required']" v-model="editedItem.no_hp" label="No HP"></v-text-field>
+                      <v-text-field 
+                        required 
+                        :rules="[v => !!v || 'No HP is required']" 
+                        v-model="editedItem.no_hp" 
+                        label="No HP"
+                        prepend-icon="phone"
+                      >
+                      </v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field required :rules="[v => !!v || 'Alamat is required']" v-model="editedItem.alamat_donatur" label="Alamat"></v-text-field>
+                      <v-text-field 
+                        required 
+                        :rules="[v => !!v || 'Alamat is required']" 
+                        v-model="editedItem.alamat_donatur" 
+                        label="Alamat"
+                        prepend-icon="location_on"
+                      >
+                      </v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field required :rules="[v => !!v || 'Email is required']" v-model="editedItem.email_donatur" label="Email"></v-text-field>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field 
+                        prepend-icon="mail"
+                        type="email"
+                        :rules="emailRules"
+                        required
+                        v-model="editedItem.email_donatur" 
+                        label="Email"
+                      >
+                      </v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -161,6 +192,10 @@ import axios from 'axios'
         alamat_donatur: '',
         email_donatur: '',
       },
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      ],
     }),
 
     computed: {

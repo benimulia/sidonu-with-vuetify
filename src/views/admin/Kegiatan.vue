@@ -36,7 +36,12 @@
                 <v-container>
                   <v-row>
                     <v-col cols="8">
-                      <v-text-field prepend-icon="title" required :rules="[v => !!v || 'Nama kegiatan is required']" v-model="editedItem.nama_kegiatan" label="Nama kegiatan"></v-text-field>
+                      <v-text-field prepend-icon="title" 
+                      required :rules="[v => !!v || 'Nama kegiatan is required']" 
+                      v-model="editedItem.nama_kegiatan" 
+                      label="Nama kegiatan"
+                      >
+                      </v-text-field>
                     </v-col>
                     <v-col cols="12" lg="4">
                       
@@ -54,29 +59,38 @@
                         ref="menu"
                         v-model="menu"
                         :close-on-content-click="false"
-                        :return-value.sync="tgl_kegiatan"
+                        :return-value.sync="editedItem.tgl_kegiatan"
                         transition="scale-transition"
                         offset-y
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="tgl_kegiatan"
+                            v-model="editedItem.tgl_kegiatan"
                             label="Tanggal Kegiatan"
                             prepend-icon="event"
                             readonly
                             v-on="on"
+                            hint="YYYY/MM/DD format"
+                            persistent-hint
                           ></v-text-field>
                         </template>
-                        <v-date-picker v-model="tgl_kegiatan" no-title scrollable>
+                        <v-date-picker v-model="editedItem.tgl_kegiatan" no-title scrollable locale>
                           <v-spacer></v-spacer>
                           <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                          <v-btn text color="primary" @click="$refs.menu.save(tgl_kegiatan)">OK</v-btn>
+                          <v-btn text color="primary" @click="$refs.menu.save(editedItem.tgl_kegiatan)">OK</v-btn>
                         </v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field prepend-icon="room" required :rules="[v => !!v || 'Tempat Kegiatan is required']" v-model="editedItem.tempat_kegiatan" label="Tempat Kegiatan"></v-text-field>
+                      <v-text-field 
+                        prepend-icon="location_on" 
+                        required 
+                        :rules="[v => !!v || 'Tempat Kegiatan is required']" 
+                        v-model="editedItem.tempat_kegiatan" 
+                        label="Tempat Kegiatan"
+                      >
+                      </v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -132,24 +146,23 @@ import axios from 'axios'
         {
           text: 'ID',
           align: 'start',
-          sortable: false,
-          value: 'id',
+          value: 'id_kegiatan',
         },
         { text: 'Nama Kegiatan', value: 'nama_kegiatan' },
-        { text: 'Tanggal Kegiatan', value: 'tgl_kegiatan' },
         { text: 'Tempat Kegiatan', value: 'tempat_kegiatan' },
+        { text: 'Tanggal Kegiatan', value: 'tgl_kegiatan' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       kegiatans: [],
       editedIndex: -1,
       editedItem: {
-        id: '',
+        id_kegiatan: '',
         nama_kegiatan: '',
         tgl_kegiatan: new Date().toISOString().substr(0, 10),
         tempat_kegiatan: '',
       },
       defaultItem: {
-        id: '',
+        id_kegiatan: '',
         nama_kegiatan: '',
         tgl_kegiatan: new Date().toISOString().substr(0, 10),
         tempat_kegiatan: '',
@@ -193,7 +206,7 @@ import axios from 'axios'
         
         console.log('deleted data');
 
-        axios.delete('/kegiatan/'+ item.id)
+        axios.delete('/kegiatan/'+ item.id_kegiatan)
           .then(response=>{
             console.log(response);
             this.$store.commit('SET_BERHASILHAPUS',true);
@@ -210,11 +223,11 @@ import axios from 'axios'
       },
 
       save () {
-        if(this.editedItem.id_jenis_kegiatan !='' || this.editedItem.jenis_kelamin !='' || this.editedItem.nama_kegiatan !='' || this.editedItem.alamat_kegiatan !='' || this.editedItem.no_hp !='' || this.editedItem.id_kegiatan !=''){
+        if(this.editedItem.nama_kegiatan !='' || this.editedItem.tempat_kegiatan !='' || this.editedItem.tgl_kegiatan !='' ){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.post('/kegiatan/'+this.editedItem.id,{nama_kegiatan:this.editedItem.nama_kegiatan, tgl_kegiatan:this.editedItem.tgl_kegiatan, tempat_kegiatan:this.editedItem.tempat_kegiatan}, {timeout : 30000})
+          axios.post('/kegiatan/'+this.editedItem.id_kegiatan,{nama_kegiatan:this.editedItem.nama_kegiatan, tgl_kegiatan:this.editedItem.tgl_kegiatan, tempat_kegiatan:this.editedItem.tempat_kegiatan}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
@@ -232,7 +245,8 @@ import axios from 'axios'
           this.kegiatans.push(this.editedItem);
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }
-        this.close()
+        this.close();
+        this.initialize();
         }else{
           this.$store.commit('SET_HARUSISI',true);
         }

@@ -42,7 +42,8 @@
                         required 
                         :rules="nameRules" 
                         v-model="editedItem.nama_jenis_donatur" 
-                        label="Nama Jenis Peserta">
+                        label="Nama Jenis Peserta"
+                      >
                       </v-text-field>
                     </v-col>
                   </v-row>
