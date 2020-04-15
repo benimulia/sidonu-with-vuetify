@@ -1,19 +1,20 @@
 <template>
   <div class="col-12">
     <v-card>
-    <v-card-title>
-      List Peserta
+    <v-card-title  >
+      List Seluruh Peserta
     </v-card-title>
 
     <v-data-table
     :headers="headers"
-    :items="pesertas"
-    sort-by="id_peserta"
+    :items="donaturs"
+    sort-by="id"
     class="elevation-1"
     :search="search"
+    
     >
       <template v-slot:top>
-        <v-toolbar flat color="white">
+        <v-toolbar flat >
           <v-text-field
             v-model="search"
             append-icon="search"
@@ -24,7 +25,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon> New Item</v-btn>
             </template>
             <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
@@ -32,24 +33,23 @@
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
 
-              <v-card-text>
+              <v-card-text>                
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="4" md="4">
-                      <v-text-field required :rules="[v => !!v || 'ID Peserta is required']" v-model="editedItem.id_peserta" label="ID Peserta"></v-text-field>
+                    <v-col cols="8">
+                      <v-text-field required :rules="[v => !!v || 'Nama Peserta is required']" v-model="editedItem.nama_donatur" label="Nama Peserta"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
                       <v-select
-                        v-model="editedItem.id_jenis_peserta"
-                        :items="jp"
+                        v-model="editedItem.id_jenis_donatur"
+                        :items="jenisdonaturs"
+                        item-text="nama_jenis_donatur"
+                        item-value="id_jenis_donatur"
                         :rules="[v => !!v || 'Jenis Peserta is required']"
                         label="Jenis Peserta"
                         required
                       ></v-select>
-                    </v-col>
-                    <v-col cols="8">
-                      <v-text-field required :rules="[v => !!v || 'Nama Peserta is required']" v-model="editedItem.nama_peserta" label="Nama Peserta"></v-text-field>
-                    </v-col>
+                    </v-col>                    
                     <v-col cols="4">
                       <v-select
                         v-model="editedItem.jenis_kelamin"
@@ -63,7 +63,10 @@
                       <v-text-field required :rules="[v => !!v || 'No HP is required']" v-model="editedItem.no_hp" label="No HP"></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field required :rules="[v => !!v || 'Alamat is required']" v-model="editedItem.alamat_peserta" label="Alamat"></v-text-field>
+                      <v-text-field required :rules="[v => !!v || 'Alamat is required']" v-model="editedItem.alamat_donatur" label="Alamat"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field required :rules="[v => !!v || 'Email is required']" v-model="editedItem.email_donatur" label="Email"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -74,7 +77,7 @@
                 <v-btn rounded color="dark" class="mx-4 warning" text @click="close">Cancel</v-btn>
                 <v-btn rounded color="dark" class="success" text @click="save" :disabled="!valid">Save</v-btn>
               </v-card-actions>
-            </v-card>
+            </v-card>            
             </v-form>
           </v-dialog>
         </v-toolbar>
@@ -83,6 +86,7 @@
         <v-icon
           @click="editItem(item)"
           color="success"
+          class="mx-1"
         >
           mdi-pencil
         </v-icon>
@@ -106,54 +110,56 @@ import AdminDashLayout from '../../layouts/AdminDashLayout'
 import axios from 'axios'
 
   export default {
-   name: 'Peserta',
+   name: 'JenisPeserta',
    components: {
-     //
   },
    data: () => ({
       dialog: false,
       valid: true,
+      nameRules: [
+      v => !!v || 'Harus diisi',
+      ],
       search: '',
-      jk:[
-        'Laki-laki',
-        'Perempuan'
-      ],
-      jp:[
-        'JP 01',
-        'JP 02',
-        'JP 03'
-      ],
       headers: [
         {
           text: 'ID',
           align: 'start',
-          sortable: false,
-          value: 'id_peserta',
+          value: 'id_donatur',
         },
-        { text: 'Jenis Peserta', value: 'id_jenis_peserta' },
-        { text: 'Nama', value: 'nama_peserta' },
+        { text: 'Jenis Peserta', value: 'nama_jenis_donatur' },
+        { text: 'Nama', value: 'nama_donatur' },
         { text: 'Jenis Kelamin', value: 'jenis_kelamin' },
         { text: 'No HP', value: 'no_hp' },
-        { text: 'Alamat', value: 'alamat_peserta' },
+        { text: 'Alamat', value: 'alamat_donatur' },
+        { text: 'Email', value: 'email_donatur' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      pesertas: [],
+      donaturs:[],
+      jenisdonaturs: [],
+      jk:[
+        'Laki-laki',
+        'Perempuan'
+      ],
       editedIndex: -1,
       editedItem: {
-        id_peserta: '',
-        id_jenis_peserta: '',
-        nama_peserta: '',
+        id_donatur: '',
+        id_jenis_donatur: '',
+        nama_jenis_donatur: '',
+        nama_donatur: '',
         jenis_kelamin: '',
         no_hp: '',
-        alamat_peserta: '',
+        alamat_donatur: '',
+        email_donatur: '',
       },
       defaultItem: {
-        id_peserta: '',
-        id_jenis_peserta: '',
-        nama_peserta: '',
+        id_donatur: '',
+        id_jenis_donatur: '',
+        nama_jenis_donatur: '',
+        nama_donatur: '',
         jenis_kelamin: '',
         no_hp: '',
-        alamat_peserta: '',
+        alamat_donatur: '',
+        email_donatur: '',
       },
     }),
 
@@ -170,31 +176,40 @@ import axios from 'axios'
     },
 
     methods: {
-      fetchPesertas(){
-          axios.get('/peserta', {timeout: 20000})
+      fetchJenisDonatur(){
+          axios.get('/jenis_donatur')
           .then(response=>{
             console.log(response.data);
-            this.pesertas= response.data;
+            this.jenisdonaturs= response.data;
+          })
+      },
+
+      fetchDonaturs(){
+          axios.get('/donatur')
+          .then(response=>{
+            console.log(response.data);
+            this.donaturs= response.data.donaturs;
           })
       },
 
       initialize(){
-        this.fetchPesertas();
+        this.fetchDonaturs();
+        this.fetchJenisDonatur();
       },
 
       editItem (item) {
-        this.editedIndex = this.pesertas.indexOf(item)
+        this.editedIndex = this.donaturs.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.pesertas.indexOf(item)
-        if(confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)){
+        const index = this.donaturs.indexOf(item)
+        if(confirm('Apakah yakin dihapus?') && this.donaturs.splice(index, 1)){
         
         console.log('deleted data');
 
-        axios.delete('/peserta/'+ item.id)
+        axios.delete('/donatur/'+ item.id_donatur)
           .then(response=>{
             console.log(response);
             this.$store.commit('SET_BERHASILHAPUS',true);
@@ -211,31 +226,34 @@ import axios from 'axios'
       },
 
       save () {
-        if(this.editedItem.id_jenis_peserta !='' || this.editedItem.jenis_kelamin !='' || this.editedItem.nama_peserta !='' || this.editedItem.alamat_peserta !='' || this.editedItem.no_hp !='' || this.editedItem.id_peserta !=''){
+        if(this.editedItem.nama_donatur !='' && this.editedItem.id_jenis_donatur !='' && this.editedItem.jenis_kelamin !='' 
+        && this.editedItem.no_hp != '' && this.editedItem.alamat_donatur !='' && this.editedItem.email_donatur !=''){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.post('/peserta/'+this.editedItem.id,{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 30000})
+          axios.post('/donatur/'+this.editedItem.id_donatur,{nama_donatur:this.editedItem.nama_donatur, id_jenis_donatur:this.editedItem.id_jenis_donatur, jenis_kelamin:this.editedItem.jenis_kelamin, 
+          no_hp:this.editedItem.no_hp, alamat_donatur:this.editedItem.alamat_donatur, email_donatur:this.editedItem.email_donatur}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          Object.assign(this.pesertas[this.editedIndex], this.editedItem);
+          Object.assign(this.donaturs[this.editedIndex], this.editedItem)
           this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
 
-          axios.post('/postpeserta',{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 30000})
+          axios.post('/postdonatur',{nama_donatur:this.editedItem.nama_donatur, id_jenis_donatur:this.editedItem.id_jenis_donatur, jenis_kelamin:this.editedItem.jenis_kelamin, 
+          no_hp:this.editedItem.no_hp, alamat_donatur:this.editedItem.alamat_donatur, email_donatur:this.editedItem.email_donatur}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          this.pesertas.push(this.editedItem);
+          this.donaturs.push(this.editedItem);          
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }
-        this.close()
+
+        this.close();
+        this.initialize();
         }else{
           this.$store.commit('SET_HARUSISI',true);
         }
@@ -244,27 +262,6 @@ import axios from 'axios'
    created(){
       this.$emit(`update:layout`, AdminDashLayout);
       this.initialize();
-      axios.interceptors.request.use((config) => {
-        // Do something before request is sent
-        this.$store.commit('LOADER',true);
-        return config;
-      }, (error) => {
-        // Do something with request error
-        this.$store.commit('LOADER',false);
-        return Promise.reject(error);
-      });
-
-      // Add a response interceptor
-      axios.interceptors.response.use((response)=> {
-          // Any status code that lie within the range of 2xx cause this function to trigger
-          // Do something with response data
-          this.$store.commit('LOADER',false);
-          return response;
-        }, (error) => {
-          // Any status codes that falls outside the range of 2xx cause this function to trigger
-          // Do something with response error
-          return Promise.reject(error);
-        });
     },
   }
 </script>

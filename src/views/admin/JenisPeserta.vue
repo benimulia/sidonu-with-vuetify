@@ -7,8 +7,8 @@
 
     <v-data-table
     :headers="headers"
-    :items="pesertas"
-    sort-by="id_peserta"
+    :items="jenispesertas"
+    sort-by="id"
     class="elevation-1"
     :search="search"
     
@@ -25,7 +25,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon> New Item</v-btn>
             </template>
             <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
@@ -36,19 +36,12 @@
               <v-card-text>                
                 <v-container>
                   <v-row>
-                    <v-col cols="4">
-                      <v-text-field 
-                        :rules="nameRules"
-                        required
-                        v-model="editedItem.id_jenis_peserta" 
-                        label="ID Jenis Peserta">
-                      </v-text-field>
-                    </v-col>
                     <v-col cols="8">
                       <v-text-field 
+                        prepend-icon="title"
                         required 
                         :rules="nameRules" 
-                        v-model="editedItem.nama_jenis_peserta" 
+                        v-model="editedItem.nama_jenis_donatur" 
                         label="Nama Jenis Peserta">
                       </v-text-field>
                     </v-col>
@@ -108,23 +101,20 @@ import axios from 'axios'
         {
           text: 'ID',
           align: 'start',
-          value: 'id',
+          value: 'id_jenis_donatur',
         },
-        {
-          text: 'ID Jenis Peserta', value: 'id_jenis_peserta'
-        },
-        { text: 'Jenis Peserta', value: 'nama_jenis_peserta' },
+        { text: 'Jenis Peserta', value: 'nama_jenis_donatur' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      pesertas: [],
+      jenispesertas: [],
       editedIndex: -1,
       editedItem: {
-        id_jenis_peserta: '',
-        nama_jenis_peserta: '',
+        id_jenis_donatur:'',
+        nama_jenis_donatur: '',
       },
       defaultItem: {
-        id_jenis_peserta: '',
-        nama_jenis_peserta: '',
+        id_jenis_donatur: '',
+        nama_jenis_donatur: '',
       },
     }),
 
@@ -141,31 +131,31 @@ import axios from 'axios'
     },
 
     methods: {
-      fetchPesertas(){
-          axios.get('/jenis_peserta')
+      fetchJenisPesertas(){
+          axios.get('/jenis_donatur')
           .then(response=>{
             console.log(response.data);
-            this.pesertas= response.data;
+            this.jenispesertas= response.data;
           })
       },
 
       initialize(){
-        this.fetchPesertas();
+        this.fetchJenisPesertas();
       },
 
       editItem (item) {
-        this.editedIndex = this.pesertas.indexOf(item)
+        this.editedIndex = this.jenispesertas.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.pesertas.indexOf(item)
-        if(confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)){
+        const index = this.jenispesertas.indexOf(item)
+        if(confirm('Apakah yakin dihapus?') && this.jenispesertas.splice(index, 1)){
         
         console.log('deleted data');
 
-        axios.delete('/jenis_peserta/'+ item.id)
+        axios.delete('/jenis_donatur/'+ item.id_jenis_donatur)
           .then(response=>{
             console.log(response);
             this.$store.commit('SET_BERHASILHAPUS',true);
@@ -182,30 +172,31 @@ import axios from 'axios'
       },
 
       save () {
-        if(this.editedItem.id_jenis_peserta !='' || this.editedItem.nama_jenis_peserta !=''){
+        if(this.editedItem.nama_jenis_peserta !=''){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.post('/jenis_peserta/'+this.editedItem.id,{id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_jenis_peserta:this.editedItem.nama_jenis_peserta}, {timeout : 30000})
+          axios.post('/jenis_donatur/'+this.editedItem.id_jenis_donatur,{nama_jenis_donatur:this.editedItem.nama_jenis_donatur}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          Object.assign(this.pesertas[this.editedIndex], this.editedItem)
+          Object.assign(this.jenispesertas[this.editedIndex], this.editedItem)
           this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
 
-          axios.post('/postjenis_peserta',{id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_jenis_peserta:this.editedItem.nama_jenis_peserta}, {timeout : 30000})
+          axios.post('/postjenis_donatur',{nama_jenis_donatur:this.editedItem.nama_jenis_donatur}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          this.pesertas.push(this.editedItem);          
+          this.jenispesertas.push(this.editedItem);          
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }
 
-        this.close()
+        this.close();
+        this.initialize();
         }else{
           this.$store.commit('SET_HARUSISI',true);
         }

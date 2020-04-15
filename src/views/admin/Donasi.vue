@@ -7,8 +7,8 @@
 
     <v-data-table
     :headers="headers"
-    :items="donasis"
-    sort-by="id_donasi"
+    :items="pesertas"
+    sort-by="id_peserta"
     class="elevation-1"
     :search="search"
     >
@@ -24,7 +24,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon>New Item</v-btn>
             </template>
             <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
@@ -36,9 +36,6 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="4" md="4">
-                      <v-text-field required :rules="[v => !!v || 'ID Donasi is required']" v-model="editedItem.id_donasi" label="ID Donasi"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="4" md="4">
                       <v-select
                         v-model="editedItem.id_jenis_donasi"
                         :items="jd"
@@ -47,23 +44,52 @@
                         required
                       ></v-select>
                     </v-col>
-                    <v-col cols="8">
-                      <v-text-field required :rules="[v => !!v || 'Nama Donasi is required']" v-model="editedItem.nama_donasi" label="Nama Donasi"></v-text-field>
+                    <v-col cols="8">                      
+                      <v-autocomplete
+                        v-model="nama_donatur"
+                        :items="namaDonatur"                        
+                        label="Nama Donatur"
+                        :rules="[v => !!v || 'Nama Donatur is required']"
+                        required
+                      ></v-autocomplete>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">                      
+                      <v-autocomplete
+                        v-model="nama_kegiatan"
+                        :items="namaKegiatan"                        
+                        label="Nama Kegiatan"
+                        :rules="[v => !!v || 'Nama Kegiatan is required']"
+                        required
+                      ></v-autocomplete>
                     </v-col>
                     <v-col cols="4">
-                      <v-select
-                        v-model="editedItem.jenis_kelamin"
-                        :items="jk"
-                        :rules="[v => !!v || 'Jenis Kelamin is required']"
-                        label="Jenis Kelamin"
-                        required
-                      ></v-select>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :return-value.sync="tgl_donasi"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="editedItem.tgl_kegiatan"
+                            label="Tanggal Donasi"
+                            prepend-icon="event"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="editedItem.tgl_donasi" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                          <v-btn text color="primary" @click="$refs.menu.save(editedItem.tgl_donasi)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field required :rules="[v => !!v || 'No HP is required']" v-model="editedItem.no_hp" label="No HP"></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field required :rules="[v => !!v || 'Alamat is required']" v-model="editedItem.alamat_donasi" label="Alamat"></v-text-field>
+                      <v-text-field type="number" required :rules="[v => !!v || 'Jumlah Donasi is required']" v-model="editedItem.no_hp" label="Jumlah Donasi"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -106,7 +132,7 @@ import AdminDashLayout from '../../layouts/AdminDashLayout'
 import axios from 'axios'
 
   export default {
-   name: 'Donasi',
+   name: 'Peserta',
    components: {
      //
   },
@@ -114,46 +140,52 @@ import axios from 'axios'
       dialog: false,
       valid: true,
       search: '',
-      jk:[
-        'Laki-laki',
-        'Perempuan'
+      menu: false,
+      namaDonatur:[
+        'Bambang',
+        'Budi'
+      ],
+      namaKegiatan:[
+        'Kegiatan1',
+        'Kegiatan2'
       ],
       jd:[
-        'jd 01',
-        'jd 02',
-        'jd 03'
+        'Tunai (Rupiah)',
+        'Tunai (Dollar)',
+        'Mobil'
       ],
       headers: [
         {
           text: 'ID',
           align: 'start',
           sortable: false,
-          value: 'id_donasi',
+          value: 'id',
         },
-        { text: 'Jenis Donasi', value: 'id_jenis_donasi' },
-        { text: 'Nama', value: 'nama_donasi' },
-        { text: 'Jenis Kelamin', value: 'jenis_kelamin' },
-        { text: 'No HP', value: 'no_hp' },
-        { text: 'Alamat', value: 'alamat_donasi' },
+        { text: 'Jenis Donasi', value: 'id_jenis_peserta' },
+        { text: 'Nama Donatur', value: 'nama_peserta' },
+        { text: 'Kegiatan', value: 'jenis_kelamin' },
+        { text: 'Tanggal Donasi', value: 'no_hp' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      donasis: [],
+      pesertas: [],
       editedIndex: -1,
       editedItem: {
-        id_donasi: '',
-        id_jenis_donasi: '',
-        nama_donasi: '',
+        id_peserta: '',
+        id_jenis_peserta: '',
+        nama_peserta: '',
         jenis_kelamin: '',
         no_hp: '',
-        alamat_donasi: '',
+        alamat_peserta: '',
+        tgl_donasi: new Date().toISOString().substr(0, 10),
       },
       defaultItem: {
-        id_donasi: '',
-        id_jenis_donasi: '',
-        nama_donasi: '',
+        id_peserta: '',
+        id_jenis_peserta: '',
+        nama_peserta: '',
         jenis_kelamin: '',
         no_hp: '',
-        alamat_donasi: '',
+        alamat_peserta: '',
+        tgl_donasi: new Date().toISOString().substr(0, 10),
       },
     }),
 
@@ -170,31 +202,31 @@ import axios from 'axios'
     },
 
     methods: {
-      fetchDonasis(){
-          axios.get('/donasi', {timeout: 20000})
+      fetchPesertas(){
+          axios.get('/peserta', {timeout: 20000})
           .then(response=>{
             console.log(response.data);
-            this.donasis= response.data;
+            this.pesertas= response.data;
           })
       },
 
       initialize(){
-        this.fetchDonasis();
+        this.fetchPesertas();
       },
 
       editItem (item) {
-        this.editedIndex = this.donasis.indexOf(item)
+        this.editedIndex = this.pesertas.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.donasis.indexOf(item)
-        if(confirm('Apakah yakin dihapus?') && this.donasis.splice(index, 1)){
+        const index = this.pesertas.indexOf(item)
+        if(confirm('Apakah yakin dihapus?') && this.pesertas.splice(index, 1)){
         
         console.log('deleted data');
 
-        axios.delete('/donasi/'+ item.id)
+        axios.delete('/peserta/'+ item.id)
           .then(response=>{
             console.log(response);
             this.$store.commit('SET_BERHASILHAPUS',true);
@@ -211,28 +243,28 @@ import axios from 'axios'
       },
 
       save () {
-        if(this.editedItem.id_jenis_donasi !='' || this.editedItem.jenis_kelamin !='' || this.editedItem.nama_donasi !='' || this.editedItem.alamat_donasi !='' || this.editedItem.no_hp !='' || this.editedItem.id_donasi !=''){
+        if(this.editedItem.id_jenis_peserta !='' || this.editedItem.jenis_kelamin !='' || this.editedItem.nama_peserta !='' || this.editedItem.alamat_peserta !='' || this.editedItem.no_hp !='' || this.editedItem.id_peserta !=''){
         if (this.editedIndex > -1) {
           console.log('edited data');
 
-          axios.post('/donasi/'+this.editedItem.id,{id_donasi:this.editedItem.id_donasi, id_jenis_donasi:this.editedItem.id_jenis_donasi, nama_donasi:this.editedItem.nama_donasi,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_donasi:this.editedItem.alamat_donasi,}, {timeout : 30000})
+          axios.post('/peserta/'+this.editedItem.id,{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
+          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          Object.assign(this.donasis[this.editedIndex], this.editedItem);
+          Object.assign(this.pesertas[this.editedIndex], this.editedItem);
           this.$store.commit('SET_BERHASILEDIT',true);
         } else {
           console.log('created data');
 
-          axios.post('/postdonasi',{id_donasi:this.editedItem.id_donasi, id_jenis_donasi:this.editedItem.id_jenis_donasi, nama_donasi:this.editedItem.nama_donasi,
-          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_donasi:this.editedItem.alamat_donasi,}, {timeout : 30000})
+          axios.post('/postpeserta',{id_peserta:this.editedItem.id_peserta, id_jenis_peserta:this.editedItem.id_jenis_peserta, nama_peserta:this.editedItem.nama_peserta,
+          jenis_kelamin:this.editedItem.jenis_kelamin, no_hp:this.editedItem.no_hp, alamat_peserta:this.editedItem.alamat_peserta,}, {timeout : 30000})
           .then(response=>{
             console.log(response);
           })
 
-          this.donasis.push(this.editedItem);
+          this.pesertas.push(this.editedItem);
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }
         this.close()
@@ -244,27 +276,7 @@ import axios from 'axios'
    created(){
       this.$emit(`update:layout`, AdminDashLayout);
       this.initialize();
-      axios.interceptors.request.use((config) => {
-        // Do something before request is sent
-        this.$store.commit('LOADER',true);
-        return config;
-      }, (error) => {
-        // Do something with request error
-        this.$store.commit('LOADER',false);
-        return Promise.reject(error);
-      });
-
-      // Add a response interceptor
-      axios.interceptors.response.use((response)=> {
-          // Any status code that lie within the range of 2xx cause this function to trigger
-          // Do something with response data
-          this.$store.commit('LOADER',false);
-          return response;
-        }, (error) => {
-          // Any status codes that falls outside the range of 2xx cause this function to trigger
-          // Do something with response error
-          return Promise.reject(error);
-        });
+      
     },
   }
 </script>

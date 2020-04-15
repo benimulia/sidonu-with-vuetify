@@ -25,7 +25,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon>New Item</v-btn>
             </template>
             <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
@@ -36,14 +36,14 @@
               <v-card-text>                
                 <v-container>
                   <v-row>
-                    <v-col cols="4">
+                    <!-- <v-col cols="4">
                       <v-text-field 
                         :rules="nameRules"
                         required
                         v-model="editedItem.id_jenis_donasi" 
                         label="ID Jenis Donasi">
                       </v-text-field>
-                    </v-col>
+                    </v-col> -->
                     <v-col cols="8">
                       <v-text-field 
                         required 
@@ -109,9 +109,6 @@ import axios from 'axios'
           text: 'ID',
           align: 'start',
           value: 'id',
-        },
-        {
-          text: 'ID Jenis Donasi', value: 'id_jenis_donasi'
         },
         { text: 'Jenis Donasi', value: 'nama_jenis_donasi' },
         { text: 'Actions', value: 'actions', sortable: false },

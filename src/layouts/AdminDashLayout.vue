@@ -195,7 +195,7 @@ import axios from 'axios'
           text: 'Donasi',
           model: true,
           children: [
-            { icon: 'mdi-clipboard-file', text: 'List Donasi', link:'/donasi' },
+            { icon: 'mdi-clipboard-file', text: 'List Donasi', link:'/admin/donasi' },
             { icon: 'mdi-mail', text: 'Jenis Donasi',link:'/admin/jenisdonasi' },
           ],
         },
