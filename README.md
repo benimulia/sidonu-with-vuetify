@@ -1,4 +1,4 @@
-# namaproject_frontend
+# PROJECT SIDONU
 
 ## Project setup
 ```
