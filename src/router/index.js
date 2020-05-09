@@ -10,6 +10,9 @@ import JenisPeserta from '../views/admin/JenisPeserta.vue'
 import Donasi from '../views/admin/Donasi.vue'
 import JenisDonasi from '../views/admin/JenisDonasi.vue'
 import Kegiatan from '../views/admin/Kegiatan.vue'
+import Report from '../views/admin/Report.vue'
+import ReportAllKegiatan from '../views/admin/ReportAllKegiatan.vue'
+import ReportPerKegiatan from '../views/admin/ReportPerKegiatan.vue'
 import store from '@/store'
 
 
@@ -68,6 +71,24 @@ const routes = [
     component: Kegiatan,
     meta: { requiresAuth: true }
   },
+  {
+    path: '/admin/report',
+    name: 'Report',
+    component: Report,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/reportallkegiatan',
+    name: 'ReportAllKegiatan',
+    component: ReportAllKegiatan,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/reportperkegiatan',
+    name: 'ReportPerKegiatan',
+    component: ReportPerKegiatan,
+    meta: { requiresAuth: true }
+  }
 
 ]
 

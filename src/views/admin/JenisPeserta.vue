@@ -8,7 +8,7 @@
     <v-data-table
     :headers="headers"
     :items="jenispesertas"
-    sort-by="id"
+    sort-by="id_jenis_donatur"
     class="elevation-1"
     :search="search"
     

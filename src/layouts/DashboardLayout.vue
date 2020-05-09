@@ -10,9 +10,9 @@
   
         <v-spacer></v-spacer>
   
-        <v-toolbar-items>
-          <v-btn text to="/signup"> Sign Up</v-btn>
-          <v-btn text to="/signin"> Sign In</v-btn>
+        <v-toolbar-items> 
+          <v-btn text to="/signup" style="text-decoration:none"> Sign Up</v-btn>
+          <v-btn text to="/signin" style="text-decoration:none"> Sign In</v-btn>
         </v-toolbar-items>
   
       </v-app-bar>

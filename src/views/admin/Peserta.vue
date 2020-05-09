@@ -8,10 +8,11 @@
     <v-data-table
     :headers="headers"
     :items="donaturs"
-    sort-by="id"
+    sort-by="id_donatur"
     class="elevation-1"
-    :search="search"
-    
+    :search="search"    
+    sortBy="id_donatur"
+    update: sort-desc
     >
       <template v-slot:top>
         <v-toolbar flat >
@@ -75,16 +76,7 @@
                         v-model="editedItem.no_hp" 
                         label="No HP"
                         prepend-icon="phone"
-                      >
-                      </v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field 
-                        required 
-                        :rules="[v => !!v || 'Alamat is required']" 
-                        v-model="editedItem.alamat_donatur" 
-                        label="Alamat"
-                        prepend-icon="location_on"
+                        type="number"
                       >
                       </v-text-field>
                     </v-col>
@@ -98,6 +90,19 @@
                         label="Email"
                       >
                       </v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-textarea 
+                        required 
+                        :rules="[v => !!v || 'Alamat is required']" 
+                        v-model="editedItem.alamat_donatur" 
+                        label="Alamat"
+                        prepend-icon="location_on"
+                        clearable
+                        clear-icon="cancel"
+                        outlined
+                      >
+                      </v-textarea>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -157,8 +162,8 @@ import axios from 'axios'
           align: 'start',
           value: 'id_donatur',
         },
-        { text: 'Jenis Peserta', value: 'nama_jenis_donatur' },
         { text: 'Nama', value: 'nama_donatur' },
+        { text: 'Jenis Peserta', value: 'nama_jenis_donatur' },
         { text: 'Jenis Kelamin', value: 'jenis_kelamin' },
         { text: 'No HP', value: 'no_hp' },
         { text: 'Alamat', value: 'alamat_donatur' },
@@ -223,7 +228,7 @@ import axios from 'axios'
           axios.get('/donatur')
           .then(response=>{
             console.log(response.data);
-            this.donaturs= response.data.donaturs;
+            this.donaturs= response.data;
           })
       },
 
@@ -262,7 +267,8 @@ import axios from 'axios'
 
       save () {
         if(this.editedItem.nama_donatur !='' && this.editedItem.id_jenis_donatur !='' && this.editedItem.jenis_kelamin !='' 
-        && this.editedItem.no_hp != '' && this.editedItem.alamat_donatur !='' && this.editedItem.email_donatur !=''){
+        && this.editedItem.no_hp != '' && this.editedItem.alamat_donatur !='' && this.editedItem.email_donatur !='')
+        {
         if (this.editedIndex > -1) {
           console.log('edited data');
 
@@ -282,7 +288,6 @@ import axios from 'axios'
           .then(response=>{
             console.log(response);
           })
-
           this.donaturs.push(this.editedItem);          
           this.$store.commit('SET_BERHASILSIMPAN',true);
         }

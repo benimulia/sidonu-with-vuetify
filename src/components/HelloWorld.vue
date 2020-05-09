@@ -16,7 +16,8 @@
         </h1>
 
         <p class="subheading font-weight-regular">
-          Ini adalah Sistem Informasi Donasi UKDW
+          Ini adalah Sistem Informasi Donasi
+          <br>yang dikelola oleh UPI UKDW
           <br>Semoga Anda mendapatkan pengalaman menarik bersama aplikasi ini!
         </p>
       </v-col>

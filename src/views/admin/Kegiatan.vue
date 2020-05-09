@@ -8,9 +8,11 @@
     <v-data-table
     :headers="headers"
     :items="kegiatans"
-    sort-by="id"
+    sort-by="id_kegiatan"
     class="elevation-1"
     :search="search"
+    sortBy="id_kegiatan"
+    update: sort-desc
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -24,7 +26,9 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on"><v-icon>mdi-plus</v-icon>New Item</v-btn>
+              <v-btn color="primary" dark class="mb-2 " v-on="on"><v-icon>mdi-plus</v-icon>Kegiatan</v-btn>
+                     
+              <v-btn color="primary" dark class="mb-2 mx-4" :to="'/admin/donasi'" style="text-decoration:none" v-on="on"><v-icon>mdi-plus</v-icon>Donasi</v-btn>
             </template>
             <v-form ref="form" v-model="valid" lazy-validation>
             <v-card>
@@ -45,16 +49,6 @@
                     </v-col>
                     <v-col cols="12" lg="4">
                       
-                      <!-- <v-date-picker 
-                      v-model="editedItem.tgl_kegiatan" 
-                      label="Tanggal Kegiatan"
-                      required
-                      full-width
-                      :landscape="$vuetify.breakpoint.smAndUp"
-                      class="mt-4"
-                      >
-                      </v-date-picker> -->
-
                       <v-menu
                         ref="menu"
                         v-model="menu"
@@ -145,12 +139,13 @@ import axios from 'axios'
       headers: [
         {
           text: 'ID',
-          align: 'start',
+          align: 'center',
           value: 'id_kegiatan',
+          
         },
-        { text: 'Nama Kegiatan', value: 'nama_kegiatan' },
-        { text: 'Tempat Kegiatan', value: 'tempat_kegiatan' },
-        { text: 'Tanggal Kegiatan', value: 'tgl_kegiatan' },
+        { text: 'Nama Kegiatan', value: 'nama_kegiatan',  sortable:false,align:'center'},
+        { text: 'Tempat Kegiatan', value: 'tempat_kegiatan', sortable:false ,align:'center'},
+        { text: 'Tanggal Kegiatan (YYYY-MM-DD)', value: 'tgl_kegiatan' ,align:'center', width:180},
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       kegiatans: [],
@@ -166,6 +161,7 @@ import axios from 'axios'
         nama_kegiatan: '',
         tgl_kegiatan: new Date().toISOString().substr(0, 10),
         tempat_kegiatan: '',
+        jumlah_donasi:0
       },
     }),
 

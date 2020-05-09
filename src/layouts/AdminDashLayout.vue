@@ -49,6 +49,7 @@
               v-for="(child, i) in item.children"
               :key="i"
                :to="child.link" link
+               style="text-decoration:none;"
             >
               <v-list-item-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
@@ -64,6 +65,7 @@
             v-else
             :key="item.text"
             :to="item.link" link
+            style="text-decoration:none;"
           >
             <v-list-item-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -84,16 +86,17 @@
       style="background-image: linear-gradient(to right, #434343 0%, black 100%);"
       dark
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+    <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title
         style="width: 300px"
         class="ml-0 pl-4"
       >
+        <router-link to="../admin/dashboard" style="text-decoration:none; color:white">
         <span class="hidden-sm-and-down">S I D O N U</span>
-        <!--<span v-if="user.name=='Admin'" class="hidden-sm-and-down">S I D O N U</span>-->
+        </router-link>
       </v-toolbar-title>
 
-      <v-spacer />
+      <v-spacer/>
       <span class="hidden-sm-and-down" v-if="authenticated">Welcome, {{user.name}}</span>
       <v-btn icon>
         <v-icon>mdi-account</v-icon>
@@ -115,11 +118,12 @@
         </v-card>
       </v-dialog>
     </v-app-bar>
-    <v-content >
+    <v-content 
+    :style="{'background-image': `url(${require('../assets/background.jpg')})` }">
       <v-container
         class="fill-height"
         fluid        
-        :style="{'background-image': `url(${require('../assets/background.jpg')})`}"
+        
       >
 
         <slot/>
@@ -138,7 +142,7 @@
           class="text-right"
           cols="12"
         >
-          sidonu &nbsp;&nbsp; &copy; {{ new Date().getFullYear() }} by Maju Jaya Makmur Sentosa
+          &copy; {{ new Date().getFullYear() }} sidonu. All rights reserved.
         </v-col>
       </v-footer>
     <Loader></Loader>
@@ -178,26 +182,26 @@ import axios from 'axios'
         { icon: 'mdi-view-dashboard', text: 'Dashboard' , link:'/admin/dashboard'},
         { icon: 'mdi-calendar', text: 'Kegiatan',link:'/admin/kegiatan' },
         {
-          icon: 'mdi-account-multiple',
+          icon: 'expand_less',
           'icon-alt': 'mdi-chevron-down',
           text: 'Peserta',
-          model: true,
+          model: false,
           children: [
-            { icon: 'mdi-clipboard-file', text: 'List Peserta', link:'/admin/peserta' },
-            { icon: 'mdi-mail', text: 'Jenis Peserta',link:'/admin/jenispeserta' },
+            { icon: 'mdi-account-multiple', text: 'List Peserta', link:'/admin/peserta' },
+            { icon: 'emoji_people', text: 'Jenis Peserta',link:'/admin/jenispeserta' },
           ],
         },
         {
-          icon: 'mdi-handshake',
+          icon: 'expand_less',
           'icon-alt': 'mdi-chevron-down',
           text: 'Donasi',
-          model: true,
+          model: false,
           children: [
-            { icon: 'mdi-clipboard-file', text: 'List Donasi', link:'/admin/donasi' },
-            { icon: 'mdi-mail', text: 'Jenis Donasi',link:'/admin/jenisdonasi' },
+            { icon: 'mdi-handshake', text: 'List Donasi', link:'/admin/donasi' },
+            { icon: 'account_balance_wallet', text: 'Jenis Donasi',link:'/admin/jenisdonasi' },
           ],
         },
-        { icon: 'mdi-settings', text: 'Settings' },
+        { icon: 'mdi-file', text: 'Laporan', link: '/admin/report' },
       ],
     }),
     methods:{
