@@ -12,13 +12,13 @@
 
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to sidonu
+          SIDONU
         </h1>
 
         <p class="subheading font-weight-regular">
           Ini adalah Sistem Informasi Donasi
-          <br>yang dikelola oleh UPI UKDW
-          <br>Semoga Anda mendapatkan pengalaman menarik bersama aplikasi ini!
+          <br>yang dikelola oleh UPI UKDW.
+          <br>Semoga Anda mendapatkan pengalaman menarik bersama sistem ini
         </p>
       </v-col>
 

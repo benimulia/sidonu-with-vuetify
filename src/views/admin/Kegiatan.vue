@@ -1,5 +1,8 @@
 <template>
   <div class="col-12">
+    <v-row>          
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-row>
     <v-card>
     <v-card-title>
       List Kegiatan
@@ -163,6 +166,18 @@ import axios from 'axios'
         tempat_kegiatan: '',
         jumlah_donasi:0
       },
+      breadcrumbs:[
+        {
+        text: 'Dashboard',
+        disabled: false,
+        href: 'dashboard',
+        },
+        {
+          text: 'Kegiatan',
+          disabled: true,
+          href: 'kegiatan',
+        }
+      ]
     }),
 
     computed: {

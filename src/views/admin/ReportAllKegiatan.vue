@@ -1,5 +1,8 @@
 <template>
     <div class="container-fluid" v-if="this.results.length>0">
+    <v-row>          
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-row>
       <div class="row">
         <div class="col-md-12">
           <v-btn class="info mb-6" @click="download"><v-icon class="mr-2">save_alt</v-icon>UNDUH LAPORAN</v-btn> <br>
@@ -93,7 +96,24 @@ import moment from 'moment'
               },
               responsive: true,
               maintainAspectRatio: false
-            }
+            },
+            breadcrumbs:[
+              {
+              text: 'Dashboard',
+              disabled: false,
+              href: 'dashboard',
+              },
+              {
+                text: 'Report',
+                disabled: false,
+                href: 'report',
+              },
+              {
+                text: 'Report Semua Kegiatan',
+                disabled: true,
+                href: 'ReportAllKegiatan',
+              },
+            ]
           }
         },
         components:{

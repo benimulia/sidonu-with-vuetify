@@ -1,6 +1,6 @@
 <template>
       <v-container fluid>
-        <v-row dense> 
+        <v-row dense>
           <v-col
             v-for="card in cards"
             :key="card.title"
@@ -24,6 +24,7 @@
         <div ref="content">
         <v-row>          
           <v-col cols="12">
+            <h5 class="mb-4" style="text-align:center;">Grafik Perolehan Donasi 10 Kegiatan Terakhir</h5>
             <BarChart 
               :chart-id="'chart'"
               :chartData="arrDonasi"
@@ -93,7 +94,7 @@ export default {
   data: () => ({
     cards: [
       { title: 'Kegiatan', src: 'https://www.nicepng.com/png/detail/831-8319932_event-management-event-icon-purple.png', flex: 4, link:'../admin/kegiatan' },
-      { title: 'Peserta', src: 'https://lh3.googleusercontent.com/proxy/RCCGroAx03OdztNbGpbGlqRqXobIfx9eiRpfJw8NHwc20HY073IkLr9sFI63W32F5dNXLtlc5YcPHaLWTMddrl5h6xRWKPdghLseNIMFWUih7-Q-X-3vZ4tURBEOvVdkT_41FNFEKQ7bKrXe-B1gzn6GPpZPX34', flex: 4, link:'../admin/peserta' },
+      { title: 'Peserta', src: require('../../assets/multiple-people.png'), flex: 4, link:'../admin/peserta' },
       { title: 'Laporan', src: 'https://www.vippng.com/png/detail/190-1909061_vector-check-list-clipart-png-download-report-buttons.png', flex: 4, link:'../admin/report' },
     ],
     tglharini: moment().format('LLL'),
@@ -119,7 +120,8 @@ export default {
           },
           responsive: true,
           maintainAspectRatio: false
-    }
+    },
+    
   }),
 };
 </script>

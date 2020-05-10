@@ -1,5 +1,8 @@
 <template>
   <div class="col-12">
+    <v-row>          
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-row>
     <v-card>
     <v-card-title  >
       List Seluruh Peserta
@@ -201,6 +204,24 @@ import axios from 'axios'
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
+      
+      breadcrumbs:[
+        {
+        text: 'Dashboard',
+        disabled: false,
+        href: 'dashboard',
+        },
+        {
+          text: 'Peserta',
+          disabled: true,
+          href: '#',
+        },
+        {
+          text: 'List Peserta',
+          disabled: true,
+          href: '#',
+        }
+      ]
     }),
 
     computed: {

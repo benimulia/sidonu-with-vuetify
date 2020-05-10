@@ -1,5 +1,8 @@
 <template>
   <div class="col-12">
+    <v-row>          
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-row>
     <v-card>
     <v-card-title  >
       Jenis Peserta
@@ -117,6 +120,23 @@ import axios from 'axios'
         id_jenis_donatur: '',
         nama_jenis_donatur: '',
       },
+      breadcrumbs:[
+        {
+        text: 'Dashboard',
+        disabled: false,
+        href: 'dashboard',
+        },
+        {
+          text: 'Peserta',
+          disabled: true,
+          href: '#',
+        },
+        {
+          text: 'Jenis Peserta',
+          disabled: true,
+          href: '#',
+        }
+      ]
     }),
 
     computed: {

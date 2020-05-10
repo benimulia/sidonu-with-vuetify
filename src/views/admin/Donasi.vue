@@ -1,5 +1,8 @@
 <template>
   <div class="col-12">
+    <v-row>          
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-row>
     <v-card>
     <v-card-title>
       List Seluruh Donasi
@@ -229,6 +232,23 @@ import axios from 'axios'
         tgl_donasi: new Date().toISOString().substr(0, 10),
         keterangan:''
       },
+      breadcrumbs:[
+        {
+        text: 'Dashboard',
+        disabled: false,
+        href: 'dashboard',
+        },
+        {
+          text: 'Donasi',
+          disabled: true,
+          href: '#',
+        },
+        {
+          text: 'List Donasi',
+          disabled: true,
+          href: '#',
+        }
+      ]
     }),
 
     computed: {
@@ -345,9 +365,7 @@ import axios from 'axios'
           .then(response=>{
             console.log(response);
           })
-
-          this.donasis.push(this.editedItem);
-          this.$store.commit('SET_BERHASILSIMPAN',true);
+          
           }else if(this.editedItem.id_jenis_donasi==2){
             axios.post('/postdonasi',{id_jenis_donasi:this.editedItem.id_jenis_donasi, id_donatur:this.editedItem.id_donatur, id_kegiatan:this.editedItem.id_kegiatan,
             tgl_donasi:this.editedItem.tgl_donasi, nominal:this.editedItem.nominal, nilai_taksir:this.nilaiAkhir, keterangan:this.editedItem.keterangan}, {timeout : 30000})
@@ -355,8 +373,6 @@ import axios from 'axios'
               console.log(response);
             })
 
-            this.donasis.push(this.editedItem);
-            this.$store.commit('SET_BERHASILSIMPAN',true);
           }else{
             axios.post('/postdonasi',{id_jenis_donasi:this.editedItem.id_jenis_donasi, id_donatur:this.editedItem.id_donatur, id_kegiatan:this.editedItem.id_kegiatan,
             tgl_donasi:this.editedItem.tgl_donasi, nominal:this.editedItem.nominal, nilai_taksir:this.editedItem.nilai_taksir, keterangan:this.editedItem.keterangan}, {timeout : 30000})
@@ -364,9 +380,10 @@ import axios from 'axios'
               console.log(response);
             })
 
-            this.donasis.push(this.editedItem);
-            this.$store.commit('SET_BERHASILSIMPAN',true);
+            
           }
+          this.donasis.push(this.editedItem);
+          this.$store.commit('SET_BERHASILSIMPAN',true);
         }
         this.close();
         this.initialize();
