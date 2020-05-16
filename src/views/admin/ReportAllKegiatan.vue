@@ -55,7 +55,7 @@
               <b><p>Keterangan Jumlah Donasi:</p> </b>
               <div class="table-responsive">
                 <!-- table -->
-                <table class="table" id="table">
+                <table class="table" id="tabledua">
                   <thead class="thead-light">
                     <tr>
                     <th>Jenis Donasi</th>
@@ -184,10 +184,15 @@ export default {
         doc.addPage();
         doc.setFontSize(9);
         doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
-        doc.autoTable({ 
-          html: '#table',
-          theme:'striped'
-        })
+        doc.setFontSize(20);
+        doc.setFont("helvetica");
+        doc.text("Tabel Perolehan Donasi ", 150, 20,'center'); //at x,y at def.units 2cm
+        var res = doc.autoTableHtmlToJson(document.getElementById('table'));
+        doc.autoTable(res.columns, res.data);
+        var res2 = doc.autoTableHtmlToJson(document.getElementById('tabledua'));
+        doc.autoTable(res2.columns, res2.data, {
+            startY: doc.lastAutoTable.finalY + 20
+        });
         
         // PAGE NUMBERING
         // Add Page number at bottom-right
@@ -198,6 +203,7 @@ export default {
         for(var i = 1; i <= pageCount; i++) {
             // Go to page i
             doc.setPage(i);
+            doc.setFontSize(9);
             //Print Page 1 of 4 for example
             doc.text("Page " + String(i) + " dari " + String(pageCount),250,180,'right');
             doc.text("Dicetak pada tanggal " + moment().format('LLL'), 250,190,'right')

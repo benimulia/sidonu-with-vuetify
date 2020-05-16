@@ -58,7 +58,7 @@
               <b><p>Keterangan Jumlah Donasi:</p> </b>
               <div class="table-responsive">
                 <!-- table -->
-                <table class="table" id="table">
+                <table class="table" id="tabledua">
                   <thead class="thead-light">
                     <tr>
                     <th>Jenis Donasi</th>
@@ -153,7 +153,15 @@ export default {
           theme:'striped',
           startY: 30
         });
-
+        
+        doc.setFontSize(12);
+        doc.setFont("helvetica");
+        doc.text("Keterangan", 150, doc.lastAutoTable.finalY + 20,'center'); //at x,y at def.units 2cm
+        doc.autoTable({ 
+          html: '#tabledua',
+          theme:'striped',
+          startY: doc.lastAutoTable.finalY + 25
+        });
         // PAGE NUMBERING
         // Add Page number at bottom-right
         // Get the number of pages
