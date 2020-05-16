@@ -53,10 +53,39 @@
               </div>
             </div>
           </div>
-        </div>
-        <div v-else class="container-fluid">
-          <center><img src="https://i.ya-webdesign.com/images/image-not-found-png-8.png" alt=""></center>
-        </div>
+          <div class="row">
+            <div class="col-md-6">
+              <b><p>Keterangan Jumlah Donasi:</p> </b>
+              <div class="table-responsive">
+                <!-- table -->
+                <table class="table" id="table">
+                  <thead class="thead-light">
+                    <tr>
+                    <th>Jenis Donasi</th>
+                    <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="jenis in jenisDonasis" :key="jenis.id_kegiatan">
+                    <td>{{jenis.nama_jenis_donasi}}</td>
+                    <td>{{jenis.total_jenis_donasi}}</td>
+                  </tr>
+                  <tr  v-for="item in total" :key="item.id_kegiatan">
+                    <td colspan="1" style="text-align:center;">Total</td>
+                    <td>{{item.jumlah_donasi}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <!-- .end table -->
+              </div>
+            </div>
+            </div>
+          
+    </div>
+    <div v-else class="container-fluid">
+      <center><img src="https://i.ya-webdesign.com/images/image-not-found-png-8.png" alt=""></center>
+    </div>
+        
 </template>
 
 <script>
@@ -72,6 +101,7 @@ export default {
     data () {
       return {
         tableListHasil: [],
+        jenisDonasis:[],
         kegiatans:[
           {
             nama_kegiatan:''
@@ -107,6 +137,7 @@ export default {
         const { data } = await axios.get("/donasiLaporanPerKegiatan/" + this.selected);
         this.tableListHasil = data.donasis;
         this.total = data.data;
+        this.jenisDonasis = data.donasi;
         //console.log(this.total)
       },
 
@@ -157,6 +188,7 @@ export default {
         const { data } = await axios.get("/donasiLaporanPerKegiatan/" + this.selected);
         this.tableListHasil = data.donasis;
         this.total = data.data;
+        this.jenisDonasis = data.donasi;
         
 
     },
