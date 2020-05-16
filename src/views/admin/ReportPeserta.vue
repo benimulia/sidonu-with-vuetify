@@ -11,7 +11,7 @@
       </div>
         <div class="row">
           <div class="col-md-12">            
-            <center><h5>Tabel Seluruh Peserta Sudah Terdaftar</h5></center>
+            <center><h5>Tabel Seluruh Peserta Sudah Terdaftar</h5></center> <br>
               <div class="table-responsive">
                 <!-- table -->
                 <table class="table" id="table">

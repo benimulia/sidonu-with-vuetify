@@ -119,7 +119,7 @@
       </v-dialog>
     </v-app-bar>
     <v-content 
-    :style="{'background-image': `url(${require('../assets/background.jpg')})` }">
+    :style="{'background-image': `url(${require('../assets/background.jpg')})` ,'background-repeat':`repeat-y`}">
       <v-container
         class="fill-height"
         fluid        

@@ -49,6 +49,33 @@
                 <!-- .end table -->
               </div>
             </div>
+          </div>          
+          <div class="row">
+            <div class="col-md-6">
+              <b><p>Keterangan Jumlah Donasi:</p> </b>
+              <div class="table-responsive">
+                <!-- table -->
+                <table class="table" id="table">
+                  <thead class="thead-light">
+                    <tr>
+                    <th>Jenis Donasi</th>
+                    <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="jenis in jeniDonasis" :key="jenis.id_jenis_donasi">
+                    <td>{{jenis.nama_jenis_donasi}}</td>
+                    <td>{{jenis.total_jenis_donasi}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="1" style="text-align:center;">Total</td>
+                    <td>{{this.total}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <!-- .end table -->
+              </div>
+            </div>
           </div>
         </div>
         <div v-else class="container-fluid">
@@ -70,6 +97,7 @@ export default {
     data () {
       return {
         results: [],
+        jeniDonasis:[],
         total:'',
         arrDonasi:[],
         chartOptions:{
@@ -129,6 +157,18 @@ export default {
         this.errors.push(e)
         });
       },
+      getJenisDonasi(){
+        axios.get("/donasiLaporanJenisDonasiSemuaKegiatan")
+        .then(
+          response => {
+            this.jeniDonasis = response.data.data;
+            console.log(response.data)
+          },  
+          )
+        .catch(e => {
+          this.errors.push(e)
+        });
+      },
       download(){
 
         let doc = new jspdf('l', 'mm', "a4"); //for landscape
@@ -167,13 +207,14 @@ export default {
       },
     },
     mounted() {
-      this.getItem()
+      this.getItem();
+      this.getJenisDonasi();
     },
     async created(){
       this.$emit(`update:layout`, AdminDashLayout);
       this.arrDonasi = [];
       const {data} = await axios.get("/donasiLaporanGrafik");
-      console.log(data);
+      //console.log(data);
       data.donasis.forEach(d => {
         const name = d.nama_kegiatan;
         const { 
