@@ -13,6 +13,7 @@ import Kegiatan from '../views/admin/Kegiatan.vue'
 import Report from '../views/admin/Report.vue'
 import ReportAllKegiatan from '../views/admin/ReportAllKegiatan.vue'
 import ReportPerKegiatan from '../views/admin/ReportPerKegiatan.vue'
+import ReportPeserta from '../views/admin/ReportPeserta.vue'
 import store from '@/store'
 
 
@@ -87,6 +88,12 @@ const routes = [
     path: '/admin/reportperkegiatan',
     name: 'ReportPerKegiatan',
     component: ReportPerKegiatan,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/reportpeserta',
+    name: 'ReportPeserta',
+    component: ReportPeserta,
     meta: { requiresAuth: true }
   }
 

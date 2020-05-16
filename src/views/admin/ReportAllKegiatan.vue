@@ -64,126 +64,123 @@ import 'jspdf-autotable'
 import BarChart from '../../components/BarChart'
 import moment from 'moment'
 
-    export default {
-        data () {
-          return {
-            id_kegiatan: '',
-            jumlah_donasi: '',
-            nama_kegiatan: '',
-            tempat_kegiatan: '',
-            tgl_kegiatan: '',
-            results: [],
-            total:'',
-            arrDonasi:[],
-            chartOptions:{
-              scales: {
-                  yAxes: [{
-                  ticks: {
-                      beginAtZero: true
-                  },
-                  gridLines: {
-                      display: true
-                  }
-                  }],
-                  xAxes: [{
-                  gridLines: {
-                      display: false
-                  }
-                  }]
+export default {
+  name: 'ReportAllKegiatan',
+
+    data () {
+      return {
+        results: [],
+        total:'',
+        arrDonasi:[],
+        chartOptions:{
+          scales: {
+              yAxes: [{
+              ticks: {
+                  beginAtZero: true
               },
-              legend: {
+              gridLines: {
                   display: true
-              },
-              responsive: true,
-              maintainAspectRatio: false
-            },
-            breadcrumbs:[
-              {
-              text: 'Dashboard',
-              disabled: false,
-              href: 'dashboard',
-              },
-              {
-                text: 'Report',
-                disabled: false,
-                href: 'report',
-              },
-              {
-                text: 'Report Semua Kegiatan',
-                disabled: true,
-                href: 'ReportAllKegiatan',
-              },
-            ]
-          }
-        },
-        components:{
-          BarChart
-        },
-        methods: {
-          getItem() {
-            axios.get("/donasiSemuaKegiatan")
-            .then(
-              response => {
-                this.results = response.data.donasis;
-                this.total = response.data.data
-              },  
-              )
-            .catch(e => {
-            this.errors.push(e)
-            });
+              }
+              }],
+              xAxes: [{
+              gridLines: {
+                  display: false
+              }
+              }]
           },
-          download(){
-
-            let doc = new jspdf('l', 'mm', "a4"); //for landscape
-            doc.setFontSize(9);
-            doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
-            doc.setFontSize(20);
-            doc.setFont("helvetica");
-            doc.text("Grafik Perolehan 10 Kegiatan Terakhir ", 90, 30); //at x,y at def.units 2cm
-            
-            let canvas = document.getElementById("chart");
-            let chartURL = canvas.toDataURL();
-            doc.addImage(chartURL,'PNG',50,50,200,100)
-            doc.addPage();
-            doc.setFontSize(9);
-            doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
-            doc.autoTable({ 
-              html: '#table',
-              theme:'striped'
-            })
-            
-            // PAGE NUMBERING
-            // Add Page number at bottom-right
-            // Get the number of pages
-            const pageCount = doc.internal.getNumberOfPages();
-
-            // For each page, print the page number and the total pages
-            for(var i = 1; i <= pageCount; i++) {
-                // Go to page i
-                doc.setPage(i);
-                //Print Page 1 of 4 for example
-                doc.text("Page " + String(i) + " dari " + String(pageCount),250,180,'right');
-                doc.text("Dicetak pada tanggal " + moment().format('LLL'), 250,190,'right')
-            }
-
-            doc.save('Perolehan Donasi per '+moment().format('ll')+'.pdf');
+          legend: {
+              display: true
           },
+          responsive: true,
+          maintainAspectRatio: false
         },
-        mounted() {
-          this.getItem()
-        },
-        async created(){
-          this.$emit(`update:layout`, AdminDashLayout);
-          this.arrDonasi = [];
-          const {data} = await axios.get("/donasiLaporanGrafik");
-          console.log(data);
-          data.donasis.forEach(d => {
-            const name = d.nama_kegiatan;
-            const { 
-              jumlah_donasi
-            } = d;
-            this.arrDonasi.push({ name, total: jumlah_donasi });
-          });
-        },
-    }
+        breadcrumbs:[
+          {
+          text: 'Dashboard',
+          disabled: false,
+          href: 'dashboard',
+          },
+          {
+            text: 'Report',
+            disabled: false,
+            href: 'report',
+          },
+          {
+            text: 'Report Semua Kegiatan',
+            disabled: true,
+            href: 'ReportAllKegiatan',
+          },
+        ]
+      }
+    },
+    components:{
+      BarChart
+    },
+    methods: {
+      getItem() {
+        axios.get("/donasiSemuaKegiatan")
+        .then(
+          response => {
+            this.results = response.data.donasis;
+            this.total = response.data.data
+          },  
+          )
+        .catch(e => {
+        this.errors.push(e)
+        });
+      },
+      download(){
+
+        let doc = new jspdf('l', 'mm', "a4"); //for landscape
+        doc.setFontSize(9);
+        doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
+        doc.setFontSize(20);
+        doc.setFont("helvetica");
+        doc.text("Grafik Perolehan 10 Kegiatan Terakhir ", 90, 30); //at x,y at def.units 2cm
+        
+        let canvas = document.getElementById("chart");
+        let chartURL = canvas.toDataURL();
+        doc.addImage(chartURL,'PNG',50,50,200,100)
+        doc.addPage();
+        doc.setFontSize(9);
+        doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
+        doc.autoTable({ 
+          html: '#table',
+          theme:'striped'
+        })
+        
+        // PAGE NUMBERING
+        // Add Page number at bottom-right
+        // Get the number of pages
+        const pageCount = doc.internal.getNumberOfPages();
+
+        // For each page, print the page number and the total pages
+        for(var i = 1; i <= pageCount; i++) {
+            // Go to page i
+            doc.setPage(i);
+            //Print Page 1 of 4 for example
+            doc.text("Page " + String(i) + " dari " + String(pageCount),250,180,'right');
+            doc.text("Dicetak pada tanggal " + moment().format('LLL'), 250,190,'right')
+        }
+
+        doc.save('Perolehan Donasi per '+moment().format('ll')+'.pdf');
+      },
+    },
+    mounted() {
+      this.getItem()
+    },
+    async created(){
+      this.$emit(`update:layout`, AdminDashLayout);
+      this.arrDonasi = [];
+      const {data} = await axios.get("/donasiLaporanGrafik");
+      console.log(data);
+      data.donasis.forEach(d => {
+        const name = d.nama_kegiatan;
+        const { 
+          jumlah_donasi
+        } = d;
+        this.arrDonasi.push({ name, total: jumlah_donasi });
+      });
+    },
+}
 </script>

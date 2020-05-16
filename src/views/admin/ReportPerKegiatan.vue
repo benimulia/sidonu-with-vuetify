@@ -18,9 +18,11 @@
             </div>
         </div>
         <div class="row">
-          <div class="col-md-12">    
-              
-            <h4>Tabel Perolehan Donasi </h4>
+          <div class="col-md-12">
+            <template v-if="kegiatans">
+              <h4>Tabel Perolehan Donasi {{kegiatans[this.selected-1].nama_kegiatan}}</h4>
+            </template>
+            
               <div class="table-responsive">
                 <!-- table -->
                 <table class="table" id="table">
@@ -64,93 +66,99 @@ import jspdf from 'jspdf'
 import 'jspdf-autotable'
 import moment from 'moment'
 
-    export default {
-        data () {
-          return {
-            tableListHasil: [],
-            kegiatans:[],
-            selected:1,
-            total:[],
-            breadcrumbs:[
-              {
-              text: 'Dashboard',
-              disabled: false,
-              href: 'dashboard',
-              },
-              {
-                text: 'Report',
-                disabled: false,
-                href: 'report',
-              },
-              {
-                text: 'Report Per Kegiatan',
-                disabled: true,
-                href: 'reportperkegiatan',
-              },
-            ]
+export default {
+  name: 'ReportPerKegiatan',
+
+    data () {
+      return {
+        tableListHasil: [],
+        kegiatans:[
+          {
+            nama_kegiatan:''
           }
-        },
-        components:{
-          
-        },
-        methods: {
-          async onChange(){
-            //console.log(this.selected);
-            const { data } = await axios.get("/donasiLaporanPerKegiatan/" + this.selected);
-            this.tableListHasil = data.donasis;
-            this.total = data.data;
-            //console.log(this.total)
+        ],
+        selected:1,
+        total:[],
+        breadcrumbs:[
+          {
+          text: 'Dashboard',
+          disabled: false,
+          href: 'dashboard',
           },
+          {
+            text: 'Report',
+            disabled: false,
+            href: 'report',
+          },
+          {
+            text: 'Report Per Kegiatan',
+            disabled: true,
+            href: 'reportperkegiatan',
+          },
+        ]
+      }
+    },
+    components:{
+      
+    },
+    methods: {
+      async onChange(){
+        //console.log(this.selected);
+        const { data } = await axios.get("/donasiLaporanPerKegiatan/" + this.selected);
+        this.tableListHasil = data.donasis;
+        this.total = data.data;
+        //console.log(this.total)
+      },
 
-          download(){
-            const doc = new jspdf('l', 'mm', "a4"); //for landscape
+      download(){
+        const doc = new jspdf('l', 'mm', "a4"); //for landscape
+        doc.setFontSize(9);
+        doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
+        doc.setFontSize(20);
+        doc.setFont("helvetica");
+        doc.text("Tabel Perolehan Donasi " + this.kegiatans[this.selected-1].nama_kegiatan, 150, 20,'center'); //at x,y at def.units 2cm
+        doc.autoTable({ 
+          html: '#table',
+          theme:'striped',
+          startY: 30
+        });
+
+        // PAGE NUMBERING
+        // Add Page number at bottom-right
+        // Get the number of pages
+        const pageCount = doc.internal.getNumberOfPages();
+
+        // For each page, print the page number and the total pages
+        for(var i = 1; i <= pageCount; i++) {
+            // Go to page i
+            doc.setPage(i);
+            //Print Page 1 of 4 for example
             doc.setFontSize(9);
-            doc.text("©" + new Date().getFullYear() + " sidonu - by Monica & Beni", 10, 10);
-            doc.setFontSize(20);
-            doc.setFont("helvetica");
-            doc.text("Grafik Kegiatan ", 150, 20,'center'); //at x,y at def.units 2cm
-            doc.autoTable({ 
-              html: '#table',
-              theme:'striped',
-              startY: 30
-            });
+            doc.text("Page " + String(i) + " dari " + String(pageCount),250,180,'right');
+            doc.text("Dicetak pada tanggal " + moment().format('LLL'), 250,190,'right')
+        }
 
-            // PAGE NUMBERING
-            // Add Page number at bottom-right
-            // Get the number of pages
-            const pageCount = doc.internal.getNumberOfPages();
+        doc.save('Perolehan Donasi Kegiatan '+this.kegiatans[this.selected-1].nama_kegiatan+'.pdf');
+      },
+    },
+    async mounted() {
+        try {
+            const response = await axios.get("/donasiSemuaKegiatan");
+            this.kegiatans = response.data.donasis;
+            console.log(this.kegiatans);
+            } catch (e) {
+            console.log(e);
+            console.log(e.response.data.error);
+            alert(e + "\n" + e.response.data.error);
+        }
+    },
+    async created(){
+        this.$emit(`update:layout`, AdminDashLayout);
+        const { data } = await axios.get("/donasiLaporanPerKegiatan/" + this.selected);
+        this.tableListHasil = data.donasis;
+        this.total = data.data;
+        
 
-            // For each page, print the page number and the total pages
-            for(var i = 1; i <= pageCount; i++) {
-                // Go to page i
-                doc.setPage(i);
-                //Print Page 1 of 4 for example
-                doc.setFontSize(9);
-                doc.text("Page " + String(i) + " dari " + String(pageCount),250,180,'right');
-                doc.text("Dicetak pada tanggal " + moment().format('LLL'), 250,190,'right')
-            }
-
-            doc.save('Perolehan Donasi Kegiatan '+this.selected+'.pdf');
-          },
-        },
-        async mounted() {
-            try {
-                const response = await axios.get("/donasiSemuaKegiatan");
-                this.kegiatans = response.data.donasis;
-                //console.log(this.kegiatans);
-                } catch (e) {
-                console.log(e);
-                console.log(e.response.data.error);
-                alert(e + "\n" + e.response.data.error);
-            }
-        },
-        async created(){
-            this.$emit(`update:layout`, AdminDashLayout);
-            const { data } = await axios.get("/donasiLaporanPerKegiatan/" + this.selected);
-            this.tableListHasil = data.donasis;
-            this.total = data.data;
-            
-
-        },
-    }
+    },
+}
 </script>

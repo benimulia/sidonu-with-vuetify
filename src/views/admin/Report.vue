@@ -4,7 +4,7 @@
         <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
     </v-row>
     <br><br>
-    <h4>PILIH MENU: </h4>
+    <h4>PILIH MENU LAPORAN: </h4>
     <v-row> 
         <v-col
         v-for="card in cards"
@@ -48,6 +48,7 @@ export default {
     cards: [
       { title: 'Laporan Semua Kegiatan', src: require('../../assets/reportallkegiatan.png'), flex: 6, link:'../admin/reportallkegiatan' },
       { title: 'Laporan Per Kegiatan', src: require('../../assets/reportperkegiatan.png'), flex: 6, link:'../admin/reportperkegiatan' },
+      { title: 'Laporan Data Peserta', src: require('../../assets/multiple-people.png'), flex: 6, link:'../admin/reportpeserta' },
     ],
       breadcrumbs:[
         {
